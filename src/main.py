@@ -24,8 +24,9 @@ canvas.create_line(0, 50, screen_width - 10, 50, width=1)
 # Computer tank
 computer_tank = canvas.create_rectangle(0, 10, 100, 40, fill='gray')
 
-# Active falling letters
+# Globals
 falling_letters = []
+wall_cells = []
 
 # Computer tank movement
 def move_tank():
@@ -66,15 +67,29 @@ def shot_letter():
     falling_letters.append(letter)
     move_letter(letter)
 
-def move_letter(letter):
-    _, current_y = canvas.coords(letter)
+def find_closest_tuple(arr, target1, target2):
+    return min(arr, key=lambda x: abs(x[0] - target1) + abs(x[1] - target2))
 
-    if abs(current_y - screen_height) < 10:
+def move_letter(letter):
+    current_x, current_y = canvas.coords(letter)
+
+    for wall_cell in wall_cells:
+        wall_cell_x, wall_cell_y, _, _ = canvas.coords(wall_cell)
+
+        if abs(current_x - wall_cell_x) < 15 and abs(current_y - wall_cell_y) < 15:
+            canvas.delete(wall_cell)
+            wall_cells.remove(wall_cell)
+
+            canvas.delete(letter)
+            falling_letters.remove(letter)
+            return
+
+    if abs(current_y - screen_height) < 100:
         canvas.delete(letter)
         falling_letters.remove(letter)
     else:
         canvas.move(letter, 0, 10)
-        canvas.after(1500, move_letter, letter)
+        canvas.after(200, move_letter, letter)
 
 # User tank
 user_tank = canvas.create_rectangle(screen_width / 2, screen_height - 130, screen_width / 2 + 100, screen_height - 85, fill='brown')
@@ -139,18 +154,30 @@ def hide_sight(event):
 canvas.create_line(0, screen_height - 80, screen_width - 10, screen_height - 80, width=1)
 
 # Wall
+def create_wall():
+    max_x1 = screen_width - 10
+    current_x0 = 5
+    current_x1 = 20
 
-max_x1 = screen_width - 10
-current_x0 = 5
-current_x1 = 20
+    while current_x1 <= max_x1:
+        global wall_cells
 
-while current_x1 <= max_x1:
-    canvas.create_rectangle(current_x0, screen_height - 180, current_x1, screen_height - 165, fill='red')
-    canvas.create_rectangle(current_x0, screen_height - 165, current_x1, screen_height - 150, fill='yellow')
-    canvas.create_rectangle(current_x0, screen_height - 150, current_x1, screen_height - 135, fill='green')
+        top_y0 = screen_height - 180
+        middle_y0 = screen_height - 165
+        bottom_y0 = screen_height - 150
 
-    current_x0 += 15
-    current_x1 += 15
+        top_block = canvas.create_rectangle(current_x0, top_y0, current_x1, screen_height - 165, fill='red')
+        middle_block = canvas.create_rectangle(current_x0, middle_y0, current_x1, screen_height - 150, fill='yellow')
+        bottom_block = canvas.create_rectangle(current_x0, bottom_y0, current_x1, screen_height - 135, fill='green')
+
+        wall_cells.append(top_block)
+        wall_cells.append(middle_block)
+        wall_cells.append(bottom_block)
+
+        current_x0 += 15
+        current_x1 += 15
+
+create_wall()
 
 root.after(1000, move_tank)
 
