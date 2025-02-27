@@ -60,7 +60,6 @@ def shot_letter():
     # make letter coordinate dynamic, not hardcoded
     letter = canvas.create_text(current_tank_position_x + 50, 60, text=letter_symbol, fill=letter_symbol_color)
     move_letter(letter)
-
 def move_letter(letter):
     _, current_y = canvas.coords(letter)
 
@@ -68,7 +67,7 @@ def move_letter(letter):
         canvas.delete(letter)
     else:
         canvas.move(letter, 0, 10)
-        canvas.after(1000, move_letter, letter)
+        canvas.after(100, move_letter, letter)
 
 root.after(1000, move_tank)
 root.mainloop()
