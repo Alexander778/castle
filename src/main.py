@@ -166,9 +166,9 @@ def create_wall():
         middle_y0 = screen_height - 165
         bottom_y0 = screen_height - 150
 
-        top_block = canvas.create_rectangle(current_x0, top_y0, current_x1, screen_height - 165, fill='red')
-        middle_block = canvas.create_rectangle(current_x0, middle_y0, current_x1, screen_height - 150, fill='yellow')
-        bottom_block = canvas.create_rectangle(current_x0, bottom_y0, current_x1, screen_height - 135, fill='green')
+        top_block = canvas.create_rectangle(current_x0, top_y0, current_x1, screen_height - 165, fill='orange', outline='black')
+        middle_block = canvas.create_rectangle(current_x0, middle_y0, current_x1, screen_height - 150, fill='orange', outline='black')
+        bottom_block = canvas.create_rectangle(current_x0, bottom_y0, current_x1, screen_height - 135, fill='orange', outline='black')
 
         wall_cells.append(top_block)
         wall_cells.append(middle_block)
