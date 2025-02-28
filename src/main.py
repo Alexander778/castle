@@ -158,11 +158,36 @@ def move_fired_letter(fired_letter):
 #Sight
 sight_line = ""
 def show_sight(event):
-    current_x = canvas.coords(user_tank)[0]
-    current_y = canvas.coords(user_tank)[1]
+    user_tank_x0 = canvas.coords(user_tank)[0]
+    user_tank_y0 = canvas.coords(user_tank)[1]
+    user_tank_x1 = canvas.coords(user_tank)[3]
+
+    line_top_y1 = screen_height * 0.09
+
+    # check status of the nearest radar
+    for radar in radars:
+        radar_range_start, radar_range_end = radar["action_range"]
+
+        if user_tank_x0 >= radar_range_start and user_tank_x1 <= radar_range_end:
+            radar_hp = radar["hp"]
+
+            if radar_hp == 2:
+                print("full line", (user_tank_x0, user_tank_x1), (radar_range_start, radar_range_end))
+
+            elif radar_hp == 1:
+                line_top_y1 = screen_height / 2
+                print("divided line", (user_tank_x0, user_tank_x1), (radar_range_start, radar_range_end))
+            else:
+                print("no line", (user_tank_x0, user_tank_x1), (radar_range_start, radar_range_end))
+                return
 
     global sight_line
-    sight_line = canvas.create_line(current_x + 50, current_y - 10, current_x + 50, 55, width=1, dash=(1, 1))
+    sight_line = canvas.create_line(user_tank_x0 + 50,
+                                    user_tank_y0 - 60,
+                                    user_tank_x0 + 50,
+                                    line_top_y1,
+                                    width=1,
+                                    dash=(1, 1))
 
 def hide_sight(event):
     global sight_line
@@ -198,19 +223,35 @@ create_wall()
 
 # Radars
 def create_radars():
-    initial_x0 = 200
-    initial_x1 = 300
+    radar_block = screen_width / 4
+
+    initial_x0 = radar_block / 2.5
+    initial_x1 = initial_x0 + 100
 
     for x in range(4):
         new_radar = canvas.create_rectangle(initial_x0, screen_height - 200, initial_x1, screen_height - 185, fill="lightgreen")
 
-        global radars
-        radars.append({ "radar": new_radar, "hp": 2 })
+        range_x0 = radar_block * x
+        range_x1 = radar_block + range_x0
 
-        initial_x0 += 500
-        initial_x1 += 500
+        global radars
+        radars.append({
+            "radar": new_radar,
+            "action_range": [
+                range_x0,
+                range_x1
+            ],
+            "hp": 2
+        })
+
+        canvas.create_text(range_x0, screen_height - 50,  text=range_x0)
+        canvas.create_text(range_x1, screen_height - 50, text=range_x1)
+
+        initial_x0 += 480
+        initial_x1 += 480
 
 create_radars()
+print(radars)
 
 root.after(1000, move_tank)
 
