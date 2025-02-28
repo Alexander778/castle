@@ -27,6 +27,7 @@ computer_tank = canvas.create_rectangle(0, 10, 100, 40, fill='gray')
 # Globals
 falling_letters = []
 wall_cells = []
+radars = []
 
 # Computer tank movement
 def move_tank():
@@ -65,18 +66,35 @@ def shot_letter():
     # make letter coordinate dynamic, not hardcoded
     letter = canvas.create_text(current_x + 50, 60, text=letter_symbol, fill=letter_symbol_color)
     falling_letters.append(letter)
-    move_letter(letter)
+    move_failing_letter(letter)
 
-def find_closest_tuple(arr, target1, target2):
-    return min(arr, key=lambda x: abs(x[0] - target1) + abs(x[1] - target2))
+def move_failing_letter(letter):
+    letter_x, letter_y = canvas.coords(letter)
 
-def move_letter(letter):
-    current_x, current_y = canvas.coords(letter)
+    # hit the radar
+    for radar in radars:
+        if radar["hp"] != 0:
+            radar_x, radar_y, _, _ = canvas.coords(radar["radar"])
 
+            if abs(letter_x - radar_x) <= 100 and abs(letter_y - radar_y) < 15:
+                damaged_radar = radar["radar"]
+                radar["hp"] -= 1
+
+                if radar["hp"] == 0:
+                    canvas.delete(damaged_radar)
+                if radar["hp"] == 1:
+                    canvas.itemconfig(damaged_radar, fill="yellow")
+
+                canvas.delete(letter)
+                falling_letters.remove(letter)
+                return
+
+
+    # hit the wall
     for wall_cell in wall_cells:
         wall_cell_x, wall_cell_y, _, _ = canvas.coords(wall_cell)
 
-        if abs(current_x - wall_cell_x) < 15 and abs(current_y - wall_cell_y) < 15:
+        if abs(letter_x - wall_cell_x) < 15 and abs(letter_y - wall_cell_y) < 15:
             canvas.delete(wall_cell)
             wall_cells.remove(wall_cell)
 
@@ -84,12 +102,12 @@ def move_letter(letter):
             falling_letters.remove(letter)
             return
 
-    if abs(current_y - screen_height) < 100:
+    if abs(letter_y - screen_height) < 100:
         canvas.delete(letter)
         falling_letters.remove(letter)
     else:
         canvas.move(letter, 0, 10)
-        canvas.after(200, move_letter, letter)
+        canvas.after(200, move_failing_letter, letter)
 
 # User tank
 user_tank = canvas.create_rectangle(screen_width / 2, screen_height - 130, screen_width / 2 + 100, screen_height - 85, fill='brown')
@@ -118,13 +136,14 @@ def fire_letter(event):
 
     letter = canvas.create_text(current_x + 50, current_y - 10, text=letter, fill=letter_symbol_color)
     move_fired_letter(letter)
+
 def move_fired_letter(fired_letter):
     current_x, current_y = canvas.coords(fired_letter)
 
     for falling_letter in falling_letters:
         falling_x, falling_y = canvas.coords(falling_letter)
-        if abs(current_x - falling_x) < 20 and abs(current_y - falling_y) < 20:
-            if canvas.itemcget(fired_letter, "text") == canvas.itemcget(falling_letter, "text"):
+        if canvas.itemcget(fired_letter, "text") == canvas.itemcget(falling_letter, "text"):
+            if abs(current_x - falling_x) < 20 and abs(current_y - falling_y) < 20:
                 canvas.delete(fired_letter)
                 canvas.delete(falling_letter)
                 falling_letters.remove(falling_letter)
@@ -139,7 +158,6 @@ def move_fired_letter(fired_letter):
 #Sight
 sight_line = ""
 def show_sight(event):
-    print("show_sight")
     current_x = canvas.coords(user_tank)[0]
     current_y = canvas.coords(user_tank)[1]
 
@@ -176,8 +194,23 @@ def create_wall():
 
         current_x0 += 15
         current_x1 += 15
-
 create_wall()
+
+# Radars
+def create_radars():
+    initial_x0 = 200
+    initial_x1 = 300
+
+    for x in range(4):
+        new_radar = canvas.create_rectangle(initial_x0, screen_height - 200, initial_x1, screen_height - 185, fill="lightgreen")
+
+        global radars
+        radars.append({ "radar": new_radar, "hp": 2 })
+
+        initial_x0 += 500
+        initial_x1 += 500
+
+create_radars()
 
 root.after(1000, move_tank)
 
