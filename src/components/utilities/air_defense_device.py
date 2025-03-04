@@ -1,4 +1,4 @@
-class AirDefenceDevice:
+class AirDefenseDevice:
     def __init__(self, canvas, coordinates, colors):
         self.canvas = canvas
 

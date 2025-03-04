@@ -4,11 +4,10 @@ from src.components.storage.falling_letter_storage import FallingLetterStorage
 
 
 class ComputerTank:
-    def __init__(self, canvas, screen_width, screen_height, launch_rocket):
+    def __init__(self, canvas, screen_width, screen_height):
         self.canvas = canvas
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.launch_rocket = launch_rocket
 
         self.new_position_for_shot_x0 = 0
         self.is_damaged = False
@@ -40,8 +39,7 @@ class ComputerTank:
         current_tank_position = self.canvas.coords(self.tank)
         current_tank_position_x0 = current_tank_position[0]
 
-        letter = FallingLetter(self.canvas, self.screen_height,
-                               current_tank_position_x0, self.launch_rocket)
+        letter = FallingLetter(self.canvas, self.screen_height, current_tank_position_x0)
 
         self._letter_storage.append(letter)
 

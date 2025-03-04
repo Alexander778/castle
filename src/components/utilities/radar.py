@@ -1,3 +1,5 @@
+from src.components.storage.radar_storage import RadarStorage
+
 class Radar:
     def __init__(self, canvas, screen_width, screen_height, radar_number):
         self.canvas = canvas
@@ -5,9 +7,9 @@ class Radar:
         self.screen_height = screen_height
         self.radar_number = radar_number
 
-        self.radar = self.create_radar()
+        self.radar = self.create()
 
-    def create_radar(self):
+    def create(self):
         radar_action_range = self.screen_width / 4
 
         distance_to_next_radar = radar_action_range * (self.radar_number - 1)

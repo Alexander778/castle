@@ -1,18 +1,25 @@
 import random
 
+from src.components.storage.air_defense_storage import AirDefenseStorage
 from src.components.storage.falling_letter_storage import FallingLetterStorage
+from src.components.storage.radar_storage import RadarStorage
+from src.components.storage.wall_storage import WallStorage
 from src.constants import alphabet, small_letter_color, big_letter_color
 
 
 class FallingLetter:
-    def __init__(self, canvas, screen_height, tank_current_position_x0, launch_rocket):
+    def __init__(self, canvas, screen_height, tank_current_position_x0):
         self.canvas = canvas
         self.screen_height = screen_height
         self.tank_current_position_x0 = tank_current_position_x0
-        self.launch_rocket = launch_rocket
-        self.letter_item = self.create()
 
         self._letter_storage = FallingLetterStorage()
+        self._radar_storage = RadarStorage()
+        self._wall_storage = WallStorage()
+        self._air_defense_storage = AirDefenseStorage()
+
+        self.letter_item = self.create()
+        self.letter_coordinates = self.canvas.coords(self.letter_item)
 
     def create(self):
         is_uppercase = random.choice([True, False])
@@ -27,72 +34,79 @@ class FallingLetter:
                                        text=letter_symbol,
                                        fill=letter_symbol_color)
 
+        air_defence_devices = self._air_defense_storage.get_data()
+
         self.canvas.tag_bind(letter_item, "<Button-1>",
-                             lambda event: self.launch_rocket(event, letter_item, is_uppercase))
+                             lambda event: air_defence_devices[1].move_rocket(self.letter_item))
         self.canvas.tag_bind(letter_item, "<Button-3>",
-                             lambda event: self.launch_rocket(event, letter_item, is_uppercase))
+                             lambda event: air_defence_devices[0].move_rocket(self.letter_item))
 
         return letter_item
 
     def move(self):
-        letter_x0, letter_y0 = self.canvas.coords(self.letter_item)
+        self.letter_coordinates = self.canvas.coords(self.letter_item)
 
-        if abs(letter_y0 - self.screen_height) < 100:
+        falling_letter_x0 = self.letter_coordinates[0]
+
+        if abs(falling_letter_x0 - self.screen_height) < 100:
             self.destroy()
         else:
             self.canvas.move(self.letter_item, 0, 10)
             self.canvas.after(500, self.move)
 
-
-
-            # # hit the radar
-            # for radar in radars:
-            #     if radar["hp"] != 0:
-            #         radar_x, radar_y, _, _ = canvas.coords(radar["radar"])
-            #
-            #         if abs(letter_x - radar_x) <= 100 and abs(letter_y - radar_y) < 15:
-            #             damaged_radar = radar["radar"]
-            #             radar["hp"] -= 1
-            #
-            #             if radar["hp"] == 0:
-            #                 canvas.delete(damaged_radar)
-            #             if radar["hp"] == 1:
-            #                 canvas.itemconfig(damaged_radar, fill="yellow")
-            #
-            #             canvas.delete(letter)
-            #             falling_letters.remove(letter)
-            #             return
-            #
-            # # hit the air defense
-            # for air_defense in air_defenses:
-            #     if air_defense["hp"] != 0:
-            #         air_x, air_y, _, _ = canvas.coords(air_defense["item"])
-            #
-            #         if abs(letter_x - air_x) <= 100 and abs(letter_y - air_y) < 15:
-            #             air = air_defense["item"]
-            #             air["hp"] -= 1
-            #
-            #             if air["hp"] == 0:
-            #                 canvas.delete(air)
-            #             if air["hp"] == 1:
-            #                 canvas.itemconfig(air, fill="yellow")
-            #
-            #             canvas.delete(letter)
-            #             falling_letters.remove(letter)
-            #             return
-            #
-            # # hit the wall
-            # for wall_cell in wall_cells:
-            #     wall_cell_x, wall_cell_y, _, _ = canvas.coords(wall_cell)
-            #
-            #     if abs(letter_x - wall_cell_x) < 15 and abs(letter_y - wall_cell_y) < 15:
-            #         canvas.itemconfig(wall_cell, state="hidden")
-            #         # wall_cells.remove(wall_cell)
-            #
-            #         canvas.delete(letter)
-            #         falling_letters.remove(letter)
-            #         return
+            self.__check_radars_for_damage()
+            self.__check_air_defense_for_damage()
+            self.__check_wall_for_damage()
 
     def destroy(self):
         self._letter_storage.remove(self)
         self.canvas.delete(self.letter_item)
+
+    def __check_radars_for_damage(self):
+        for radar in self._radar_storage.get_data():
+            if radar["hp"] == 0:
+                return
+
+            falling_letter_x0, falling_letter_y0 = self.letter_coordinates
+
+            radar_item = radar["item"]
+            radar_x0, radar_y0, radar_x1, _ = self.canvas.coords(radar_item)
+
+            if abs(falling_letter_x0 - radar_x0) <= 100 and abs(falling_letter_y0 - radar_y0) < 15:
+                radar["hp"] -= 1
+
+                if radar["hp"] == 0:
+                    self.canvas.delete(radar_item)
+                if radar["hp"] == 1:
+                    self.canvas.itemconfig(radar_item, fill="yellow")
+
+                self.destroy()
+                return
+
+    def __check_air_defense_for_damage(self):
+        for air_defense in self._air_defense_storage.get_data():
+            air_device = air_defense.device
+            if air_device["hp"] != 0:
+                air_x0, air_y0, _, _ = self.canvas.coords(air_device["item"])
+                falling_letter_x0, falling_letter_y0 = self.letter_coordinates
+
+                if abs(falling_letter_x0 - air_x0) <= 50 and abs(falling_letter_y0 - air_y0) < 15:
+                    air_device["hp"] -= 1
+
+                    if air_device["hp"] == 0:
+                        self.canvas.delete(air_device["item"])
+                    if air_defense["hp"] == 1:
+                        self.canvas.itemconfig(air_device["item"], fill="yellow")
+
+                    self.destroy()
+                    return
+
+    def __check_wall_for_damage(self):
+        for cell in self._wall_storage.get_data():
+            cell_x0, cell_y0, _, _ = self.canvas.coords(cell)
+            falling_letter_x0, falling_letter_y0 = self.letter_coordinates
+
+            if abs(falling_letter_x0 - cell_x0) < 15 and abs(falling_letter_y0 - cell_y0) < 15:
+                self.canvas.itemconfig(cell, state="hidden")
+                self.destroy()
+                return
