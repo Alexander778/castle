@@ -37,13 +37,17 @@ class AirDefenseDevice:
     def move_rocket(self, letter):
         rocket = self.device["rocket"]
 
+        letter_exists = len(self.canvas.coords(letter)) != 0
+
+        if letter_exists is False:
+            self.canvas.delete(rocket)
+
         letter_x0, letter_y0 = self.canvas.coords(letter)
         rocket_x0, rocket_y0, _, _ = self.canvas.coords(rocket)
 
         if abs(rocket_x0 - letter_x0) < 10 and abs(rocket_y0 - letter_y0) < 10:
             self.canvas.delete(rocket)
             self.canvas.delete(letter)
-            # falling_letters.remove(letter)
             return
 
         if rocket_y0 < 10:

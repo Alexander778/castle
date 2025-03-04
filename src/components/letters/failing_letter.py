@@ -95,6 +95,7 @@ class FallingLetter:
 
                     if air_device["hp"] == 0:
                         self.canvas.delete(air_device["item"])
+                        self.canvas.delete(air_device["rocket"])
                     if air_defense["hp"] == 1:
                         self.canvas.itemconfig(air_device["item"], fill="yellow")
 
@@ -103,6 +104,10 @@ class FallingLetter:
 
     def __check_wall_for_damage(self):
         for cell in self._wall_storage.get_data():
+
+            if self.canvas.itemcget(cell, "state") == "hidden":
+                continue
+
             cell_x0, cell_y0, _, _ = self.canvas.coords(cell)
             falling_letter_x0, falling_letter_y0 = self.letter_coordinates
 
