@@ -1,3 +1,6 @@
+from src.components.storage.falling_letter_storage import FallingLetterStorage
+
+
 class UserTank:
     def __init__(self, canvas, screen_width, screen_height):
         self.canvas = canvas
@@ -5,6 +8,8 @@ class UserTank:
         self.screen_height = screen_height
         self.new_position_for_shot_x0 = 0
         self.is_damaged = False
+
+        self.letter_storage = FallingLetterStorage()
 
         self.tank = self.canvas.create_rectangle(
             screen_width / 2,
@@ -27,7 +32,7 @@ class UserTank:
             self.canvas.move(self.tank, -10, 0)
 
     def move_tank_right(self, _):
-        user_tank_x0 = self.canvas.coords(self.tank)()[0]
+        user_tank_x0 = self.canvas.coords(self.tank)[0]
 
         if user_tank_x0 < self.screen_width - 100:
             self.canvas.move(self.tank, 10, 0)
@@ -48,18 +53,21 @@ class UserTank:
         self.move_letter(letter)
 
     def move_letter(self, fired_letter):
-        current_x, current_y = self.canvas.coords(fired_letter)
+        fired_letter_x0, fired_letter_y0 = self.canvas.coords(fired_letter)
 
-        # for falling_letter in falling_letters:
-        #     falling_x, falling_y = self.canvas.coords(falling_letter)
-        #     if self.canvas.itemcget(fired_letter, "text") == self.canvas.itemcget(falling_letter, "text"):
-        #         if abs(current_x - falling_x) < 20 and abs(current_y - falling_y) < 20:
-        #             self.canvas.delete(fired_letter)
-        #             self.canvas.delete(falling_letter)
-        #             falling_letters.remove(falling_letter)
-        #             return
+        filtered_array = list(filter(lambda f_letter:
+                                self.canvas.itemcget(fired_letter, "text") == self.canvas.itemcget(f_letter.letter_item, "text"),
+                                self.letter_storage.get_data()))
 
-        if current_y < 10:
+        for falling_letter in filtered_array:
+            falling_x, falling_y = self.canvas.coords(falling_letter.letter_item)
+
+            if abs(fired_letter_x0 - falling_x) < 20 and abs(fired_letter_y0 - falling_y) < 20:
+                self.canvas.delete(fired_letter)
+                falling_letter.destroy()
+                return
+
+        if fired_letter_y0 < 10:
             self.canvas.delete(fired_letter)
         else:
             self.canvas.move(fired_letter, 0, -10)

@@ -1,13 +1,18 @@
 import random
+
+from src.components.storage.falling_letter_storage import FallingLetterStorage
 from src.constants import alphabet, small_letter_color, big_letter_color
 
+
 class FallingLetter:
-    def __init__(self, canvas, screen_height, tank_current_position_x0):
+    def __init__(self, canvas, screen_height, tank_current_position_x0, launch_rocket):
         self.canvas = canvas
         self.screen_height = screen_height
         self.tank_current_position_x0 = tank_current_position_x0
+        self.launch_rocket = launch_rocket
+        self.letter_item = self.create()
 
-        self.letter = self.create()
+        self._letter_storage = FallingLetterStorage()
 
     def create(self):
         is_uppercase = random.choice([True, False])
@@ -18,19 +23,27 @@ class FallingLetter:
             letter_symbol = letter_symbol.upper()
             letter_symbol_color = big_letter_color
 
-        return self.canvas.create_text(self.tank_current_position_x0 + 50, 60,
+        letter_item = self.canvas.create_text(self.tank_current_position_x0 + 50, 60,
                                        text=letter_symbol,
                                        fill=letter_symbol_color)
 
+        self.canvas.tag_bind(letter_item, "<Button-1>",
+                             lambda event: self.launch_rocket(event, letter_item, is_uppercase))
+        self.canvas.tag_bind(letter_item, "<Button-3>",
+                             lambda event: self.launch_rocket(event, letter_item, is_uppercase))
+
+        return letter_item
+
     def move(self):
-        letter_x0, letter_y0 = self.canvas.coords(self.letter)
+        letter_x0, letter_y0 = self.canvas.coords(self.letter_item)
 
         if abs(letter_y0 - self.screen_height) < 100:
-            self.canvas.delete(self.letter)
-            # falling_letters.remove(letter)
+            self.destroy()
         else:
-            self.canvas.move(self.letter, 0, 10)
+            self.canvas.move(self.letter_item, 0, 10)
             self.canvas.after(500, self.move)
+
+
 
             # # hit the radar
             # for radar in radars:
@@ -79,3 +92,7 @@ class FallingLetter:
             #         canvas.delete(letter)
             #         falling_letters.remove(letter)
             #         return
+
+    def destroy(self):
+        self._letter_storage.remove(self)
+        self.canvas.delete(self.letter_item)

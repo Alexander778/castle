@@ -20,8 +20,6 @@ class Radar:
                                                  fill="lightgreen",
                                                  tags="target")
 
-        print(initial_x0, self.screen_height - 200, initial_x1, self.screen_height - 185)
-
         range_x0 = distance_to_next_radar
         range_x1 = radar_action_range + range_x0
 
