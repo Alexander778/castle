@@ -38,3 +38,15 @@ class Radar:
             ],
             "hp": 2
         }
+
+    def heal(self):
+        if self.radar["hp"] == 1:
+            self.radar["hp"] += 1
+            self.canvas.itemconfig(self.radar["item"], fill="lightgreen")
+
+    def hit(self):
+        self.canvas.itemconfig(self.radar["item"], fill="yellow")
+
+    def destroy(self):
+        self.canvas.delete(self.radar["item"])
+

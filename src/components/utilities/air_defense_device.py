@@ -58,3 +58,15 @@ class AirDefenseDevice:
 
             self.canvas.move(rocket, step_x, step_y)
             self.canvas.after(100, self.move_rocket, letter)
+
+    def heal(self):
+        if self.device["hp"] == 1:
+            self.device["hp"] += 1
+            self.canvas.itemconfig(self.device["item"], fill="white")
+
+    def hit(self):
+        self.canvas.itemconfig(self.device["item"], fill="yellow")
+
+    def destroy(self):
+        self.canvas.delete(self.device["item"])
+        self.canvas.delete(self.device["rocket"])

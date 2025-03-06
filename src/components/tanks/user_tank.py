@@ -1,4 +1,5 @@
 from src.components.storage.falling_letter_storage import FallingLetterStorage
+from src.components.storage.radar_storage import RadarStorage
 
 
 class UserTank:
@@ -9,7 +10,8 @@ class UserTank:
         self.new_position_for_shot_x0 = 0
         self.is_damaged = False
 
-        self.letter_storage = FallingLetterStorage()
+        self._letter_storage = FallingLetterStorage()
+        self._radar_storage = RadarStorage()
 
         self.tank = self.canvas.create_rectangle(
             screen_width / 2,
@@ -57,7 +59,7 @@ class UserTank:
 
         filtered_array = list(filter(lambda f_letter:
                                 self.canvas.itemcget(fired_letter, "text") == self.canvas.itemcget(f_letter.letter_item, "text"),
-                                self.letter_storage.get_data()))
+                                self._letter_storage.get_data()))
 
         for falling_letter in filtered_array:
             falling_x, falling_y = self.canvas.coords(falling_letter.letter_item)
@@ -76,29 +78,33 @@ class UserTank:
     def show_sight(self, _):
         user_tank_x0, user_tank_y0, user_tank_x1, _ = self.canvas.coords(self.tank)
 
-        line_top_y1 = self.screen_height * 0.09
-
-        # check status of the nearest radar
-        # for radar in radars:
-        #     radar_range_start, radar_range_end = radar["action_range"]
-        #
-        #     if user_tank_x0 >= radar_range_start and user_tank_x1 <= radar_range_end:
-        #         radar_hp = radar["hp"]
-        #
-        #         if radar_hp == 2:
-        #             print("full line", (user_tank_x0, user_tank_x1), (radar_range_start, radar_range_end))
-        #
-        #         elif radar_hp == 1:
-        #             line_top_y1 = screen_height / 2
-        #             print("divided line", (user_tank_x0, user_tank_x1), (radar_range_start, radar_range_end))
-        #         else:
-        #             print("no line", (user_tank_x0, user_tank_x1), (radar_range_start, radar_range_end))
-        #             return
+        line_length = self.__calculate_sight_length(user_tank_x0, user_tank_x1)
+        if line_length == 0:
+            self.canvas.itemconfig(self.sight, state="hidden")
+            return
 
         self.canvas.coords(self.sight,
-                          user_tank_x0 + 50, user_tank_y0 - 60,
-                          user_tank_x0 + 50, line_top_y1)
+                           user_tank_x0 + 50, user_tank_y0 - 80,
+                           user_tank_x0 + 50, self.__calculate_sight_length(user_tank_x0, user_tank_x1))
+
         self.canvas.itemconfig(self.sight, state="normal")
 
     def hide_sight(self, _):
         self.canvas.itemconfig(self.sight, state="hidden")
+
+    def __calculate_sight_length(self, tank_x0, tank_x1):
+        radars = self._radar_storage.get_data()
+
+        for radar in radars:
+            radar_object = radar.radar
+            radar_range_start, radar_range_end = radar_object["action_range"]
+
+            if tank_x0 >= radar_range_start:
+                radar_hp = radar_object["hp"]
+
+                if radar_hp == 2:
+                    return 55
+                if radar_hp == 1:
+                    return self.screen_height / 2
+                else:
+                    return 0

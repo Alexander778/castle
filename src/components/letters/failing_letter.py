@@ -46,6 +46,9 @@ class FallingLetter:
     def move(self):
         self.letter_coordinates = self.canvas.coords(self.letter_item)
 
+        if len(self.letter_coordinates) == 0:
+            return
+
         falling_letter_x0 = self.letter_coordinates[0]
 
         if abs(falling_letter_x0 - self.screen_height) < 100:
@@ -64,21 +67,22 @@ class FallingLetter:
 
     def __check_radars_for_damage(self):
         for radar in self._radar_storage.get_data():
-            if radar["hp"] == 0:
+            radar_object = radar.radar
+            if radar_object["hp"] == 0:
                 return
 
             falling_letter_x0, falling_letter_y0 = self.letter_coordinates
 
-            radar_item = radar["item"]
+            radar_item = radar_object["item"]
             radar_x0, radar_y0, radar_x1, _ = self.canvas.coords(radar_item)
 
             if abs(falling_letter_x0 - radar_x0) <= 100 and abs(falling_letter_y0 - radar_y0) < 15:
-                radar["hp"] -= 1
+                radar_object["hp"] -= 1
 
-                if radar["hp"] == 0:
-                    self.canvas.delete(radar_item)
-                if radar["hp"] == 1:
-                    self.canvas.itemconfig(radar_item, fill="yellow")
+                if radar_object["hp"] == 0:
+                    radar.destroy()
+                if radar_object["hp"] == 1:
+                    radar.hit()
 
                 self.destroy()
                 return
@@ -93,11 +97,11 @@ class FallingLetter:
                 if abs(falling_letter_x0 - air_x0) <= 50 and abs(falling_letter_y0 - air_y0) < 15:
                     air_device["hp"] -= 1
 
+                    if air_device["hp"] == 1:
+                        air_defense.hit()
+
                     if air_device["hp"] == 0:
-                        self.canvas.delete(air_device["item"])
-                        self.canvas.delete(air_device["rocket"])
-                    if air_defense["hp"] == 1:
-                        self.canvas.itemconfig(air_device["item"], fill="yellow")
+                        air_defense.destroy()
 
                     self.destroy()
                     return

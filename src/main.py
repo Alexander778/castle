@@ -30,10 +30,10 @@ letter_storage = FallingLetterStorage()
 
 radar_storage = RadarStorage()
 radar_storage.append_range([
-    Radar(canvas, screen_width, screen_height, 1).radar,
-    Radar(canvas, screen_width, screen_height, 2).radar,
-    Radar(canvas, screen_width, screen_height, 3).radar,
-    Radar(canvas, screen_width, screen_height, 4).radar
+    Radar(canvas, screen_width, screen_height, 1),
+    Radar(canvas, screen_width, screen_height, 2),
+    Radar(canvas, screen_width, screen_height, 3),
+    Radar(canvas, screen_width, screen_height, 4)
 ])
 
 wall_storage = WallStorage()
@@ -60,7 +60,7 @@ tool_panel = canvas.create_rectangle(screen_width / 2 - 100, screen_height - 30,
                                      screen_width / 2 + 300, screen_height - 75,
                                      fill="lightgreen")
 # Repairing
-repairing_key = RepairingKey(canvas, screen_width, screen_height, wall.cells)
+repairing_key = RepairingKey(canvas, screen_width, screen_height)
 
 # Tanks
 computer_tank = ComputerTank(canvas, screen_width, screen_height)
