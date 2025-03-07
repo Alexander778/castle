@@ -7,6 +7,7 @@ from src.components.storage.wall_storage import WallStorage
 from src.components.tanks.computer_tank import ComputerTank
 from src.components.tanks.user_tank import UserTank
 from src.components.utilities.air_defense_device import AirDefenseDevice
+from src.components.utilities.movable_wall import MovableWall
 from src.components.utilities.wall import Wall
 from src.components.utilities.radar import Radar
 from src.components.utilities.repairing_key import RepairingKey
@@ -62,9 +63,13 @@ tool_panel = canvas.create_rectangle(screen_width / 2 - 100, screen_height - 30,
 # Repairing
 repairing_key = RepairingKey(canvas, screen_width, screen_height)
 
+# Movable wall
+movable_wall = MovableWall(canvas, tool_panel)
+
 # Tanks
 computer_tank = ComputerTank(canvas, screen_width, screen_height)
 user_tank = UserTank(canvas, screen_width, screen_height)
+
 
 # Binders
 root.after(1000, computer_tank.move_to_new_position())
@@ -78,5 +83,9 @@ root.bind("<KeyRelease-Up>", user_tank.hide_sight)
 canvas.tag_bind(tagOrId="draggable", sequence="<ButtonPress-1>", func=repairing_key.on_drag_start)
 canvas.tag_bind(tagOrId="draggable", sequence="<B1-Motion>", func=repairing_key.on_drag_move)
 canvas.tag_bind(tagOrId="draggable", sequence="<ButtonRelease-1>", func=repairing_key.on_drag_release)
+
+canvas.tag_bind(tagOrId="drag_movable_wall", sequence="<ButtonPress-1>", func=movable_wall.on_drag_start)
+canvas.tag_bind(tagOrId="drag_movable_wall", sequence="<B1-Motion>", func=movable_wall.on_drag_move)
+canvas.tag_bind(tagOrId="drag_movable_wall", sequence="<ButtonRelease-1>", func=movable_wall.on_drag_release)
 
 root.mainloop()
