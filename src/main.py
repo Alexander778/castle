@@ -70,7 +70,6 @@ movable_wall = MovableWall(canvas, tool_panel)
 computer_tank = ComputerTank(canvas, screen_width, screen_height)
 user_tank = UserTank(canvas, screen_width, screen_height)
 
-
 # Binders
 root.after(1000, computer_tank.move_to_new_position())
 
