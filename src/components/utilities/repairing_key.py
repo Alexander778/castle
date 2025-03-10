@@ -4,23 +4,29 @@ from src.components.storage.wall_storage import WallStorage
 
 
 class RepairingKey:
-    def __init__(self, canvas, screen_width, screen_height):
+    def __init__(self, canvas, screen_width, screen_height, tool_panel):
         self.canvas = canvas
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.tool_panel = tool_panel
 
         self._wall_storage = WallStorage()
         self._radar_storage = RadarStorage()
         self._air_defense_storage = AirDefenseStorage()
 
-        self.repair_key = canvas.create_rectangle(
-                screen_width / 2 - 80, screen_height - 65,
-                screen_width / 2 - 60, screen_height - 50,
-                fill="yellow",
-                tags="draggable")
+        self.repair_key = self.create()
 
         self.key_start_x0 = 0
         self.key_start_y0 = 0
+
+    def create(self):
+        tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
+
+        return self.canvas.create_rectangle(
+            tp_x0 + 10, tp_y0 + 5,
+            tp_x0 + 30, tp_y0 + 20,
+            fill="yellow",
+            tags="draggable")
 
     def on_drag_start(self, event):
         self.key_start_x0 = event.x

@@ -18,8 +18,9 @@ root = Tk()
 
 # Screen
 screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight() - 150
-root.geometry(f"{screen_width}x{screen_height}")
+screen_height = root.winfo_screenheight()
+root.state('zoomed')
+root.resizable(False, False)
 
 #Canvas
 canvas = Canvas(root)
@@ -45,10 +46,10 @@ wall_storage.append_range(wall.cells)
 air_defense_storage = AirDefenseStorage()
 air_defense_storage.append_range([
     AirDefenseDevice(canvas,
-                     coordinates=(screen_width - 20, screen_height - 190, screen_width - 40, screen_height - 210),
+                     coordinates=(screen_width - 50, screen_height - 220, screen_width - 70, screen_height - 240),
                      colors={ "fill": "white", "outline": big_letter_color }),
     AirDefenseDevice(canvas,
-                     coordinates=(50, screen_height - 190, 80, screen_height - 210),
+                     coordinates=(50, screen_height - 220, 75, screen_height - 240),
                      colors={ "fill": "white", "outline": small_letter_color })
 ])
 
@@ -57,11 +58,11 @@ canvas.create_line(0, 50, screen_width - 10, 50, width=1)
 canvas.create_line(0, screen_height - 80, screen_width - 10, screen_height - 80, width=1)
 
 # Tool panel
-tool_panel = canvas.create_rectangle(screen_width / 2 - 100, screen_height - 30,
-                                     screen_width / 2 + 300, screen_height - 75,
+tool_panel = canvas.create_rectangle(screen_width / 2 - 100, screen_height - 60,
+                                     screen_width / 2 + 300, screen_height - 35,
                                      fill="lightgreen")
 # Repairing
-repairing_key = RepairingKey(canvas, screen_width, screen_height)
+repairing_key = RepairingKey(canvas, screen_width, screen_height, tool_panel)
 
 # Movable wall
 movable_wall = MovableWall(canvas, tool_panel)

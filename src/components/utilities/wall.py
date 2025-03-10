@@ -14,19 +14,19 @@ class Wall:
         current_x1 = 20
 
         while current_x1 <= max_x1:
-            top_y0 = self.screen_height - 180
-            middle_y0 = self.screen_height - 165
-            bottom_y0 = self.screen_height - 150
+            top_y0 = self.screen_height - 210
+            middle_y0 = self.screen_height - 195
+            bottom_y0 = self.screen_height - 180
 
-            top_block = self.canvas.create_rectangle(current_x0, top_y0, current_x1, self.screen_height - 165,
+            top_block = self.canvas.create_rectangle(current_x0, top_y0, current_x1, self.screen_height - 195,
                                                      fill='orange',
                                                      outline='black',
                                                      tags="target")
-            middle_block = self.canvas.create_rectangle(current_x0, middle_y0, current_x1, self.screen_height - 150,
+            middle_block = self.canvas.create_rectangle(current_x0, middle_y0, current_x1, self.screen_height - 180,
                                                         fill='orange',
                                                         outline='black',
                                                         tags="target")
-            bottom_block = self.canvas.create_rectangle(current_x0, bottom_y0, current_x1, self.screen_height - 135,
+            bottom_block = self.canvas.create_rectangle(current_x0, bottom_y0, current_x1, self.screen_height - 165,
                                                         fill='orange',
                                                         outline='black',
                                                         tags="target")

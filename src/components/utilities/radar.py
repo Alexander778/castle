@@ -17,8 +17,8 @@ class Radar:
         initial_x0 = (radar_action_range / 2.5) + distance_to_next_radar
         initial_x1 = initial_x0 + 100
 
-        radar = self.canvas.create_rectangle(initial_x0, self.screen_height - 200,
-                                                 initial_x1, self.screen_height - 185,
+        radar = self.canvas.create_rectangle(initial_x0, self.screen_height - 240,
+                                                 initial_x1, self.screen_height - 215,
                                                  fill="lightgreen",
                                                  tags="target")
 
@@ -26,8 +26,8 @@ class Radar:
         range_x1 = radar_action_range + range_x0
 
         # Todo remove ranges - testing purposes
-        self.canvas.create_text(range_x0, self.screen_height - 50, text=range_x0)
-        self.canvas.create_text(range_x1, self.screen_height - 50, text=range_x1)
+        # self.canvas.create_text(range_x0, self.screen_height - 50, text=range_x0)
+        # self.canvas.create_text(range_x1, self.screen_height - 50, text=range_x1)
         #
 
         return {

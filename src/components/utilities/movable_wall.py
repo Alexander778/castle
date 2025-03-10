@@ -17,8 +17,8 @@ class MovableWall:
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
         movable_wall = self.canvas.create_rectangle(
-            tp_x0 + 80, tp_y0 + 10,
-            tp_x0 + 150, tp_y0 + 30,
+            tp_x0 + 50, tp_y0 + 5,
+            tp_x0 + 150, tp_y0 + 20,
             fill="coral",
             tags="drag_movable_wall")
 
