@@ -66,17 +66,22 @@ class FallingLetter:
         self.canvas.delete(self.letter_item)
 
     def __check_radars_for_damage(self):
-        for radar in self._radar_storage.get_data():
+        falling_letter_x0, falling_letter_y0 = self.letter_coordinates
+        potentially_damaged_radars = [
+            radar for radar in self._radar_storage.get_data()
+            if len(self.canvas.coords(radar.radar["item"])) != 0
+            and self.canvas.coords(radar.radar["item"])[0] <= falling_letter_x0 <=
+                self.canvas.coords(radar.radar["item"])[2]
+            and radar.radar["hp"] != 0
+        ]
+
+        for radar in potentially_damaged_radars:
             radar_object = radar.radar
-            if radar_object["hp"] == 0:
-                return
-
-            falling_letter_x0, falling_letter_y0 = self.letter_coordinates
-
             radar_item = radar_object["item"]
+
             radar_x0, radar_y0, radar_x1, _ = self.canvas.coords(radar_item)
 
-            if abs(falling_letter_x0 - radar_x0) <= 100 and abs(falling_letter_y0 - radar_y0) < 15:
+            if abs(falling_letter_y0 - radar_y0) < 15:
                 radar_object["hp"] -= 1
 
                 if radar_object["hp"] == 0:
@@ -88,34 +93,43 @@ class FallingLetter:
                 return
 
     def __check_air_defense_for_damage(self):
-        for air_defense in self._air_defense_storage.get_data():
+        falling_letter_x0, falling_letter_y0 = self.letter_coordinates
+        potentially_damaged_air_defenses = [
+            air_defense for air_defense in self._air_defense_storage.get_data()
+            if len(self.canvas.coords(air_defense.device["item"])) != 0
+            and self.canvas.coords(air_defense.device["item"])[0] <= falling_letter_x0 <=
+               self.canvas.coords(air_defense.device["item"])[2]
+            and air_defense.device["hp"] != 0
+        ]
+
+        for air_defense in potentially_damaged_air_defenses:
             air_device = air_defense.device
-            if air_device["hp"] != 0:
-                air_x0, air_y0, _, _ = self.canvas.coords(air_device["item"])
-                falling_letter_x0, falling_letter_y0 = self.letter_coordinates
+            air_x0, air_y0, _, _ = self.canvas.coords(air_device["item"])
 
-                if abs(falling_letter_x0 - air_x0) <= 50 and abs(falling_letter_y0 - air_y0) < 15:
-                    air_device["hp"] -= 1
+            if abs(falling_letter_y0 - air_y0) < 15:
+                air_device["hp"] -= 1
 
-                    if air_device["hp"] == 1:
-                        air_defense.hit()
+                if air_device["hp"] == 1:
+                    air_defense.hit()
 
-                    if air_device["hp"] == 0:
-                        air_defense.destroy()
+                if air_device["hp"] == 0:
+                    air_defense.destroy()
 
-                    self.destroy()
-                    return
+                self.destroy()
+                return
 
     def __check_wall_for_damage(self):
-        for cell in self._wall_storage.get_data():
+        falling_letter_x0, falling_letter_y0 = self.letter_coordinates
+        potentially_damaged_cells = [
+            cell for cell in self._wall_storage.get_data()
+            if abs(self.canvas.coords(cell)[0] - falling_letter_x0) <= 5
+               and "hidden" not in self.canvas.itemcget(cell, "state")
+        ]
 
-            if self.canvas.itemcget(cell, "state") == "hidden":
-                continue
-
+        for cell in potentially_damaged_cells:
             cell_x0, cell_y0, _, _ = self.canvas.coords(cell)
-            falling_letter_x0, falling_letter_y0 = self.letter_coordinates
 
-            if abs(falling_letter_x0 - cell_x0) < 15 and abs(falling_letter_y0 - cell_y0) < 15:
+            if abs(falling_letter_y0 - cell_y0) < 15:
                 self.canvas.itemconfig(cell, state="hidden")
                 self.destroy()
                 return

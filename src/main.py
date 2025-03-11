@@ -1,5 +1,6 @@
 from tkinter import *
 
+from src.components.interfaces.missed_shots_sensor import MissedShotsSensor
 from src.components.storage.air_defense_storage import AirDefenseStorage
 from src.components.storage.falling_letter_storage import FallingLetterStorage
 from src.components.storage.radar_storage import RadarStorage
@@ -67,9 +68,12 @@ repairing_key = RepairingKey(canvas, screen_width, screen_height, tool_panel)
 # Movable wall
 movable_wall = MovableWall(canvas, tool_panel)
 
+# Missed shots sensor
+sensor = MissedShotsSensor(canvas, screen_width, screen_height)
+
 # Tanks
 computer_tank = ComputerTank(canvas, screen_width, screen_height)
-user_tank = UserTank(canvas, screen_width, screen_height)
+user_tank = UserTank(canvas, screen_width, screen_height, sensor)
 
 # Binders
 root.after(1000, computer_tank.move_to_new_position())

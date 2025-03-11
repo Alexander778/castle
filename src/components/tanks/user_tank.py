@@ -1,12 +1,14 @@
 from src.components.storage.falling_letter_storage import FallingLetterStorage
 from src.components.storage.radar_storage import RadarStorage
+from src.components.utilities.huge_rocket import HugeRocket
 
 
 class UserTank:
-    def __init__(self, canvas, screen_width, screen_height):
+    def __init__(self, canvas, screen_width, screen_height, missed_shots_sensor):
         self.canvas = canvas
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.missed_shots_sensor = missed_shots_sensor
         self.new_position_for_shot_x0 = 0
         self.is_damaged = False
 
@@ -69,30 +71,31 @@ class UserTank:
                 falling_letter.destroy()
                 return
 
-        if fired_letter_y0 < 10:
+        if fired_letter_y0 < 50:
             self.canvas.delete(fired_letter)
+            self.__update_missed_shots_counter()
         else:
             self.canvas.move(fired_letter, 0, -10)
             self.canvas.after(100, self.move_letter, fired_letter)
 
     def show_sight(self, _):
-        user_tank_x0, user_tank_y0, user_tank_x1, _ = self.canvas.coords(self.tank)
+        user_tank_x0, user_tank_y0, _, _ = self.canvas.coords(self.tank)
 
-        line_length = self.__calculate_sight_length(user_tank_x0, user_tank_x1)
+        line_length = self.__calculate_sight_length(user_tank_x0)
         if line_length == 0:
             self.canvas.itemconfig(self.sight, state="hidden")
             return
 
         self.canvas.coords(self.sight,
                            user_tank_x0 + 50, user_tank_y0 - 80,
-                           user_tank_x0 + 50, self.__calculate_sight_length(user_tank_x0, user_tank_x1))
+                           user_tank_x0 + 50, self.__calculate_sight_length(user_tank_x0))
 
         self.canvas.itemconfig(self.sight, state="normal")
 
     def hide_sight(self, _):
         self.canvas.itemconfig(self.sight, state="hidden")
 
-    def __calculate_sight_length(self, tank_x0, tank_x1):
+    def __calculate_sight_length(self, tank_x0):
         radars = self._radar_storage.get_data()
 
         for radar in radars:
@@ -108,3 +111,13 @@ class UserTank:
                     return self.screen_height / 2
                 else:
                     return 0
+
+    def __update_missed_shots_counter(self):
+        self.missed_shots_sensor.decrease()
+
+        if self.missed_shots_sensor.counter == 0:
+            self.missed_shots_sensor.reset()
+            huge_rocket = HugeRocket(self.canvas,
+                                     self.screen_width, self.screen_height)
+            huge_rocket.move()
+
