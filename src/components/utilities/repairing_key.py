@@ -89,6 +89,7 @@ class RepairingKey:
                 return
 
     def __reset_repairing_key(self):
+        tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
         self.canvas.coords(self.repair_key,
-                           self.screen_width / 2 - 80, self.screen_height - 65,
-                           self.screen_width / 2 - 60, self.screen_height - 50)
+                           tp_x0 + 10, tp_y0 + 5,
+                           tp_x0 + 30, tp_y0 + 20,)

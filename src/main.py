@@ -2,7 +2,6 @@ from tkinter import *
 
 from src.components.interfaces.missed_shots_sensor import MissedShotsSensor
 from src.components.storage.air_defense_storage import AirDefenseStorage
-from src.components.storage.falling_letter_storage import FallingLetterStorage
 from src.components.storage.radar_storage import RadarStorage
 from src.components.storage.wall_storage import WallStorage
 from src.components.tanks.computer_tank import ComputerTank
@@ -29,7 +28,7 @@ canvas.config(width=screen_width, height=screen_height)
 canvas.grid(column=0, row=0)
 
 # Storages
-letter_storage = FallingLetterStorage()
+falling_letters = []
 
 radar_storage = RadarStorage()
 radar_storage.append_range([
@@ -61,22 +60,22 @@ canvas.create_line(0, screen_height - 80, screen_width - 10, screen_height - 80,
 # Tool panel
 tool_panel = canvas.create_rectangle(screen_width / 2 - 100, screen_height - 60,
                                      screen_width / 2 + 300, screen_height - 35,
-                                     fill="lightgreen")
+                                     fill="green")
 # Repairing
 repairing_key = RepairingKey(canvas, screen_width, screen_height, tool_panel)
 
 # Movable wall
-movable_wall = MovableWall(canvas, tool_panel)
+movable_wall = MovableWall(canvas, tool_panel, falling_letters)
 
 # Missed shots sensor
 sensor = MissedShotsSensor(canvas, screen_width, screen_height)
 
 # Tanks
-computer_tank = ComputerTank(canvas, screen_width, screen_height)
-user_tank = UserTank(canvas, screen_width, screen_height, sensor)
+computer_tank = ComputerTank(canvas, screen_width, screen_height, falling_letters)
+user_tank = UserTank(canvas, screen_width, screen_height, sensor, falling_letters)
 
 # Binders
-root.after(1000, computer_tank.move_to_new_position())
+root.after(1000, computer_tank.move_to_new_position(), None)
 
 root.bind("<Left>", user_tank.move_tank_left)
 root.bind("<Right>", user_tank.move_tank_right)

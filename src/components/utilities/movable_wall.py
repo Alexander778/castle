@@ -1,11 +1,9 @@
-from src.components.storage.falling_letter_storage import FallingLetterStorage
-
-
 class MovableWall:
-    def __init__(self, canvas, tool_panel):
+    def __init__(self, canvas, tool_panel, falling_letters):
         self.canvas = canvas
         self.tool_panel = tool_panel
-        self._letter_storage = FallingLetterStorage()
+
+        self.falling_letters = falling_letters
 
         self.key_start_x0 = 0
         self.key_start_y0 = 0
@@ -102,7 +100,7 @@ class MovableWall:
 
     def __find_closest_letter_to_catch(self, wall_y0, wall_x0, wall_move_timeout):
         letters = [
-            l for l in self._letter_storage.get_data()
+            l for l in self.falling_letters
             if self.canvas.coords(l.letter_item)[1] < wall_y0
         ]
 

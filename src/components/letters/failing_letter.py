@@ -1,19 +1,19 @@
 import random
 
 from src.components.storage.air_defense_storage import AirDefenseStorage
-from src.components.storage.falling_letter_storage import FallingLetterStorage
 from src.components.storage.radar_storage import RadarStorage
 from src.components.storage.wall_storage import WallStorage
 from src.constants import alphabet, small_letter_color, big_letter_color
 
 
 class FallingLetter:
-    def __init__(self, canvas, screen_height, tank_current_position_x0):
+    def __init__(self, canvas, screen_height, tank_current_position_x0, falling_letters):
         self.canvas = canvas
         self.screen_height = screen_height
         self.tank_current_position_x0 = tank_current_position_x0
 
-        self._letter_storage = FallingLetterStorage()
+        self.falling_letters = falling_letters
+
         self._radar_storage = RadarStorage()
         self._wall_storage = WallStorage()
         self._air_defense_storage = AirDefenseStorage()
@@ -62,7 +62,7 @@ class FallingLetter:
             self.__check_wall_for_damage()
 
     def destroy(self):
-        self._letter_storage.remove(self)
+        self.falling_letters.remove(self)
         self.canvas.delete(self.letter_item)
 
     def __check_radars_for_damage(self):
