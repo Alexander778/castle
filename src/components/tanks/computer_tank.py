@@ -1,14 +1,13 @@
 import random
 from src.components.letters.failing_letter import FallingLetter
+from src.states.state import State
 
 
 class ComputerTank:
-    def __init__(self, canvas, screen_width, screen_height, falling_letters):
+    def __init__(self, canvas, screen_width, screen_height):
         self.canvas = canvas
         self.screen_width = screen_width
         self.screen_height = screen_height
-
-        self.falling_letters = falling_letters
 
         self.new_position_for_shot_x0 = 0
         self.is_damaged = False
@@ -38,8 +37,10 @@ class ComputerTank:
         current_tank_position = self.canvas.coords(self.tank)
         current_tank_position_x0 = current_tank_position[0]
 
-        letter = FallingLetter(self.canvas, self.screen_height, current_tank_position_x0, self.falling_letters)
+        letter = FallingLetter(self.canvas,
+                               self.screen_height,
+                               current_tank_position_x0)
 
-        self.falling_letters.append(letter)
+        State().append("letters", letter)
 
         letter.move()

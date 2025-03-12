@@ -1,18 +1,14 @@
-from src.components.storage.radar_storage import RadarStorage
 from src.components.utilities.huge_rocket import HugeRocket
+from src.states.state import State
 
 
 class UserTank:
-    def __init__(self, canvas, screen_width, screen_height, missed_shots_sensor, falling_letters):
+    def __init__(self, canvas, screen_width, screen_height, missed_shots_sensor):
         self.canvas = canvas
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.missed_shots_sensor = missed_shots_sensor
         self.new_position_for_shot_x0 = 0
-
-        self.falling_letters = falling_letters
-
-        self._radar_storage = RadarStorage()
 
         self.tank = self.canvas.create_rectangle(
             screen_width / 2,
@@ -60,7 +56,7 @@ class UserTank:
 
         filtered_array = list(filter(lambda f_letter:
                                 self.canvas.itemcget(fired_letter, "text") == self.canvas.itemcget(f_letter.letter_item, "text"),
-                                self.falling_letters))
+                                State().get_data("letters")))
 
         for falling_letter in filtered_array:
             falling_x, falling_y = self.canvas.coords(falling_letter.letter_item)
@@ -95,7 +91,7 @@ class UserTank:
         self.canvas.itemconfig(self.sight, state="hidden")
 
     def __calculate_sight_length(self, tank_x0):
-        radars = self._radar_storage.get_data()
+        radars = State().get_data("radars")
 
         for radar in radars:
             radar_object = radar.radar

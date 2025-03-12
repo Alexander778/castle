@@ -1,17 +1,14 @@
 from tkinter import *
 
 from src.components.interfaces.missed_shots_sensor import MissedShotsSensor
-from src.components.storage.air_defense_storage import AirDefenseStorage
-from src.components.storage.radar_storage import RadarStorage
-from src.components.storage.wall_storage import WallStorage
 from src.components.tanks.computer_tank import ComputerTank
 from src.components.tanks.user_tank import UserTank
-from src.components.utilities.air_defense_device import AirDefenseDevice
+from src.components.utilities.air_defense import AirDefense
 from src.components.utilities.movable_wall import MovableWall
+from src.components.utilities.radars import Radars
 from src.components.utilities.wall import Wall
 from src.components.utilities.radar import Radar
 from src.components.utilities.repairing_key import RepairingKey
-from src.constants import small_letter_color, big_letter_color
 
 #root
 root = Tk()
@@ -30,28 +27,14 @@ canvas.grid(column=0, row=0)
 # Storages
 falling_letters = []
 
-radar_storage = RadarStorage()
-radar_storage.append_range([
-    Radar(canvas, screen_width, screen_height, 1),
-    Radar(canvas, screen_width, screen_height, 2),
-    Radar(canvas, screen_width, screen_height, 3),
-    Radar(canvas, screen_width, screen_height, 4)
-])
+# Radars
+radars = Radars(canvas, screen_width, screen_height)
 
-wall_storage = WallStorage()
+# Wall
 wall = Wall(canvas, screen_width, screen_height)
-wall_storage.append_range(wall.cells)
 
 # Air defence
-air_defense_storage = AirDefenseStorage()
-air_defense_storage.append_range([
-    AirDefenseDevice(canvas,
-                     coordinates=(screen_width - 50, screen_height - 220, screen_width - 70, screen_height - 240),
-                     colors={ "fill": "white", "outline": big_letter_color }),
-    AirDefenseDevice(canvas,
-                     coordinates=(50, screen_height - 220, 75, screen_height - 240),
-                     colors={ "fill": "white", "outline": small_letter_color })
-])
+air_defense = AirDefense(canvas, screen_width, screen_height)
 
 # Divider lines
 canvas.create_line(0, 50, screen_width - 10, 50, width=1)
@@ -65,14 +48,14 @@ tool_panel = canvas.create_rectangle(screen_width / 2 - 100, screen_height - 60,
 repairing_key = RepairingKey(canvas, screen_width, screen_height, tool_panel)
 
 # Movable wall
-movable_wall = MovableWall(canvas, tool_panel, falling_letters)
+movable_wall = MovableWall(canvas, tool_panel)
 
 # Missed shots sensor
 sensor = MissedShotsSensor(canvas, screen_width, screen_height)
 
 # Tanks
-computer_tank = ComputerTank(canvas, screen_width, screen_height, falling_letters)
-user_tank = UserTank(canvas, screen_width, screen_height, sensor, falling_letters)
+computer_tank = ComputerTank(canvas, screen_width, screen_height)
+user_tank = UserTank(canvas, screen_width, screen_height, sensor)
 
 # Binders
 root.after(1000, computer_tank.move_to_new_position(), None)

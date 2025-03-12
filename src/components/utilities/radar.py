@@ -1,5 +1,3 @@
-from src.components.storage.radar_storage import RadarStorage
-
 class Radar:
     def __init__(self, canvas, screen_width, screen_height, radar_number):
         self.canvas = canvas

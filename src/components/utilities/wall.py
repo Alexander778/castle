@@ -1,10 +1,14 @@
+from src.states.state import State
+
+
 class Wall:
     def __init__(self, canvas, screen_width, screen_height):
         self.canvas = canvas
         self.screen_width = screen_width
         self.screen_height = screen_height
 
-        self.cells = self.create_wall()
+        state = State()
+        state.append_range("wall_cells", self.create_wall())
 
     def create_wall(self):
         cells = []

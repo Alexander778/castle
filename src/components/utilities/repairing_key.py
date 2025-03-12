@@ -1,6 +1,4 @@
-from src.components.storage.air_defense_storage import AirDefenseStorage
-from src.components.storage.radar_storage import RadarStorage
-from src.components.storage.wall_storage import WallStorage
+from src.states.state import State
 
 
 class RepairingKey:
@@ -9,10 +7,6 @@ class RepairingKey:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.tool_panel = tool_panel
-
-        self._wall_storage = WallStorage()
-        self._radar_storage = RadarStorage()
-        self._air_defense_storage = AirDefenseStorage()
 
         self.repair_key = self.create()
 
@@ -52,8 +46,7 @@ class RepairingKey:
                            self.screen_width / 2 - 60, self.screen_height - 50)
 
     def __heal_wall_cell(self, x1, y1, x2, y2):
-        for cell in self._wall_storage.get_data():
-
+        for cell in State().get_data("wall_cells"):
             if self.canvas.itemcget(cell, "state") == "normal":
                 continue
 
@@ -64,7 +57,7 @@ class RepairingKey:
                 return
 
     def __heal_radars(self, x1, y1, x2, y2):
-        for radar in self._radar_storage.get_data():
+        for radar in State().get_data("radars"):
             radar_object = radar.radar
             rx1, ry1, rx2, ry2 = self.canvas.coords(radar_object["item"])
 
@@ -76,7 +69,7 @@ class RepairingKey:
                 return
 
     def __heal_air_defense(self, x1, y1, x2, y2):
-        for air_device in self._air_defense_storage.get_data():
+        for air_device in State().get_data("air_defense"):
             device_object = air_device.device
 
             dx1, dy1, dx2, dy2 = self.canvas.coords(device_object["item"])

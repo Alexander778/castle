@@ -1,22 +1,13 @@
 import random
-
-from src.components.storage.air_defense_storage import AirDefenseStorage
-from src.components.storage.radar_storage import RadarStorage
-from src.components.storage.wall_storage import WallStorage
 from src.constants import alphabet, small_letter_color, big_letter_color
+from src.states.state import State
 
 
 class FallingLetter:
-    def __init__(self, canvas, screen_height, tank_current_position_x0, falling_letters):
+    def __init__(self, canvas, screen_height, tank_current_position_x0):
         self.canvas = canvas
         self.screen_height = screen_height
         self.tank_current_position_x0 = tank_current_position_x0
-
-        self.falling_letters = falling_letters
-
-        self._radar_storage = RadarStorage()
-        self._wall_storage = WallStorage()
-        self._air_defense_storage = AirDefenseStorage()
 
         self.letter_item = self.create()
         self.letter_coordinates = self.canvas.coords(self.letter_item)
@@ -34,7 +25,7 @@ class FallingLetter:
                                        text=letter_symbol,
                                        fill=letter_symbol_color)
 
-        air_defence_devices = self._air_defense_storage.get_data()
+        air_defence_devices = State().get_data("air_defense")
 
         self.canvas.tag_bind(letter_item, "<Button-1>",
                              lambda event: air_defence_devices[1].move_rocket(self.letter_item))
@@ -62,13 +53,13 @@ class FallingLetter:
             self.__check_wall_for_damage()
 
     def destroy(self):
-        self.falling_letters.remove(self)
+        State().remove("letters", self)
         self.canvas.delete(self.letter_item)
 
     def __check_radars_for_damage(self):
         falling_letter_x0, falling_letter_y0 = self.letter_coordinates
         potentially_damaged_radars = [
-            radar for radar in self._radar_storage.get_data()
+            radar for radar in State().get_data("radars")
             if len(self.canvas.coords(radar.radar["item"])) != 0
             and self.canvas.coords(radar.radar["item"])[0] <= falling_letter_x0 <=
                 self.canvas.coords(radar.radar["item"])[2]
@@ -95,7 +86,7 @@ class FallingLetter:
     def __check_air_defense_for_damage(self):
         falling_letter_x0, falling_letter_y0 = self.letter_coordinates
         potentially_damaged_air_defenses = [
-            air_defense for air_defense in self._air_defense_storage.get_data()
+            air_defense for air_defense in State().get_data("air_defense")
             if len(self.canvas.coords(air_defense.device["item"])) != 0
             and self.canvas.coords(air_defense.device["item"])[0] <= falling_letter_x0 <=
                self.canvas.coords(air_defense.device["item"])[2]
@@ -121,7 +112,7 @@ class FallingLetter:
     def __check_wall_for_damage(self):
         falling_letter_x0, falling_letter_y0 = self.letter_coordinates
         potentially_damaged_cells = [
-            cell for cell in self._wall_storage.get_data()
+            cell for cell in State().get_data("wall_cells")
             if abs(self.canvas.coords(cell)[0] - falling_letter_x0) <= 5
                and "hidden" not in self.canvas.itemcget(cell, "state")
         ]

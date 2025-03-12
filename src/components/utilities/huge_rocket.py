@@ -1,19 +1,11 @@
 import random
-
-from src.components.storage.air_defense_storage import AirDefenseStorage
-from src.components.storage.radar_storage import RadarStorage
-from src.components.storage.wall_storage import WallStorage
-
+from src.states.state import State
 
 class HugeRocket:
     def __init__(self, canvas, screen_width, screen_height):
         self.canvas = canvas
         self.screen_width = screen_width
         self.screen_height = screen_height
-
-        self._radar_storage = RadarStorage()
-        self._wall_storage = WallStorage()
-        self._air_defense_storage = AirDefenseStorage()
 
         self.rocket = self.create()
 
@@ -52,7 +44,7 @@ class HugeRocket:
 
         rocket_x0, rocket_y0, rocket_x1, rocket_y1 = self.canvas.coords(self.rocket)
         potentially_damaged_radars = [
-            radar for radar in self._radar_storage.get_data()
+            radar for radar in State().get_data("radars")
             if len(self.canvas.coords(radar.radar["item"])) != 0
                and self.canvas.coords(radar.radar["item"])[0] <= rocket_x1 <=
                 self.canvas.coords(radar.radar["item"])[2]
@@ -74,7 +66,7 @@ class HugeRocket:
 
         rocket_x0, rocket_y0, rocket_x1, rocket_y1 = self.canvas.coords(self.rocket)
         potentially_damaged_air_defenses = [
-            air_defense for air_defense in self._air_defense_storage.get_data()
+            air_defense for air_defense in State().get_data("air_defense")
             if len(self.canvas.coords(air_defense.device["item"])) != 0
             and self.canvas.coords(air_defense.device["item"])[0] <= rocket_x0 <=
                self.canvas.coords(air_defense.device["item"])[2]
@@ -95,7 +87,7 @@ class HugeRocket:
 
         rocket_x0, rocket_y0, rocket_x1, rocket_y1 = self.canvas.coords(self.rocket)
         potentially_damaged_cells = [
-            cell for cell in self._wall_storage.get_data()
+            cell for cell in State().get_data("wall_cells")
             if self.canvas.coords(cell)[0] <= rocket_x0
             and "hidden" not in self.canvas.itemcget(cell, "state")
         ]
