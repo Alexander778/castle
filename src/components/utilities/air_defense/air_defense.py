@@ -1,4 +1,4 @@
-from src.components.utilities.air_defense_device import AirDefenseDevice
+from src.components.utilities.air_defense.air_defense_device import AirDefenseDevice
 from src.constants import small_letter_color, big_letter_color
 from src.states.state import State
 

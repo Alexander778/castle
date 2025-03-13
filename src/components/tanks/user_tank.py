@@ -1,4 +1,4 @@
-from src.components.utilities.huge_rocket import HugeRocket
+from src.components.utilities.rockets.huge_rocket import HugeRocket
 from src.states.state import State
 
 

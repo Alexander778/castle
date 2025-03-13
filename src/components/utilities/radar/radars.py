@@ -1,4 +1,4 @@
-from src.components.utilities.radar import Radar
+from src.components.utilities.radar.radar import Radar
 from src.states.state import State
 
 class Radars:

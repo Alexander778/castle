@@ -3,12 +3,11 @@ from tkinter import *
 from src.components.interfaces.missed_shots_sensor import MissedShotsSensor
 from src.components.tanks.computer_tank import ComputerTank
 from src.components.tanks.user_tank import UserTank
-from src.components.utilities.air_defense import AirDefense
-from src.components.utilities.movable_wall import MovableWall
-from src.components.utilities.radars import Radars
-from src.components.utilities.wall import Wall
-from src.components.utilities.radar import Radar
-from src.components.utilities.repairing_key import RepairingKey
+from src.components.utilities.air_defense.air_defense import AirDefense
+from src.components.utilities.walls.movable_wall import MovableWall
+from src.components.utilities.radar.radars import Radars
+from src.components.utilities.walls.wall import Wall
+from src.components.utilities.repairing_key.repairing_key import RepairingKey
 
 #root
 root = Tk()
