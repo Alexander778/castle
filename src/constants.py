@@ -2,4 +2,4 @@ alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'
 small_letter_color = "#0000FF"
 big_letter_color = "#FF0000"
 
-repairing_key_cost = 5
+repairing_key_cost = 3
