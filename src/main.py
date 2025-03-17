@@ -1,9 +1,11 @@
 from tkinter import *
 
 from src.components.interfaces.missed_shots_sensor import MissedShotsSensor
+from src.components.interfaces.points_sensor import PointsSensor
 from src.components.tanks.computer_tank import ComputerTank
 from src.components.tanks.user_tank import UserTank
 from src.components.utilities.air_defense.air_defense import AirDefense
+from src.components.utilities.rockets.anti_rocket import AntiRocket
 from src.components.utilities.walls.movable_wall import MovableWall
 from src.components.utilities.radar.radars import Radars
 from src.components.utilities.walls.wall import Wall
@@ -32,6 +34,10 @@ radars = Radars(canvas, screen_width, screen_height)
 # Wall
 wall = Wall(canvas, screen_width, screen_height)
 
+# Anti rocket platform
+rocket_platform = canvas.create_rectangle(5, screen_height - 165,
+                                     screen_width - 10, screen_height - 140,
+                                     fill="lightgray")
 # Air defence
 air_defense = AirDefense(canvas, screen_width, screen_height)
 
@@ -49,12 +55,18 @@ repairing_key = RepairingKey(canvas, screen_width, screen_height, tool_panel)
 # Movable wall
 movable_wall = MovableWall(canvas, tool_panel)
 
+# Anti-rocket
+anti_rocket = AntiRocket(canvas, screen_width, screen_height, tool_panel, rocket_platform)
+
 # Missed shots sensor
 sensor = MissedShotsSensor(canvas, screen_width, screen_height)
 
+# Points sensor
+point_sensor = PointsSensor(canvas, screen_width, screen_height)
+
 # Tanks
 computer_tank = ComputerTank(canvas, screen_width, screen_height)
-user_tank = UserTank(canvas, screen_width, screen_height, sensor)
+user_tank = UserTank(canvas, screen_width, screen_height)
 
 # Binders
 root.after(1000, computer_tank.move_to_new_position(), None)
@@ -72,5 +84,10 @@ canvas.tag_bind(tagOrId="draggable", sequence="<ButtonRelease-1>", func=repairin
 canvas.tag_bind(tagOrId="drag_movable_wall", sequence="<ButtonPress-1>", func=movable_wall.on_drag_start)
 canvas.tag_bind(tagOrId="drag_movable_wall", sequence="<B1-Motion>", func=movable_wall.on_drag_move)
 canvas.tag_bind(tagOrId="drag_movable_wall", sequence="<ButtonRelease-1>", func=movable_wall.on_drag_release)
+
+canvas.tag_bind(tagOrId="draggable_rocket", sequence="<Double-Button-1>", func=anti_rocket.launch_rocket)
+canvas.tag_bind(tagOrId="draggable_rocket", sequence="<ButtonPress-1>", func=anti_rocket.on_drag_start)
+canvas.tag_bind(tagOrId="draggable_rocket", sequence="<B1-Motion>", func=anti_rocket.on_drag_move)
+canvas.tag_bind(tagOrId="draggable_rocket", sequence="<ButtonRelease-1>", func=anti_rocket.on_drag_release)
 
 root.mainloop()

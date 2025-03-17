@@ -1,13 +1,15 @@
+from src.components.interfaces.missed_shots_sensor import MissedShotsSensor
+from src.components.interfaces.points_sensor import PointsSensor
 from src.components.utilities.rockets.huge_rocket import HugeRocket
 from src.states.state import State
 
 
 class UserTank:
-    def __init__(self, canvas, screen_width, screen_height, missed_shots_sensor):
+    def __init__(self, canvas, screen_width, screen_height):
         self.canvas = canvas
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.missed_shots_sensor = missed_shots_sensor
+
         self.new_position_for_shot_x0 = 0
 
         self.tank = self.canvas.create_rectangle(
@@ -64,6 +66,7 @@ class UserTank:
             if abs(fired_letter_x0 - falling_x) < 20 and abs(fired_letter_y0 - falling_y) < 20:
                 self.canvas.delete(fired_letter)
                 falling_letter.destroy()
+                PointsSensor(self.canvas, self.screen_width, self.screen_height).increase()
                 return
 
         if fired_letter_y0 < 50:
@@ -108,11 +111,14 @@ class UserTank:
                     return 0
 
     def __update_missed_shots_counter(self):
-        self.missed_shots_sensor.decrease()
+        missed_shots_sensor = MissedShotsSensor(self.canvas, self.screen_width, self.screen_height)
+        missed_shots_sensor.decrease()
 
-        if self.missed_shots_sensor.counter == 0:
-            self.missed_shots_sensor.reset()
+        if missed_shots_sensor.counter == 0:
+            missed_shots_sensor.reset()
             huge_rocket = HugeRocket(self.canvas,
                                      self.screen_width, self.screen_height)
+
+            State().append("huge_rocket", huge_rocket)
             huge_rocket.move()
 

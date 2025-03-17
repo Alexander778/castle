@@ -20,7 +20,7 @@ class HugeRocket:
             fill='red')
 
     def move(self):
-        if self.rocket is None:
+        if self.rocket is None or len(self.canvas.coords(self.rocket)) == 0:
             return
         _, _, _, rocket_y1 = self.canvas.coords(self.rocket)
 
@@ -28,7 +28,7 @@ class HugeRocket:
             self.destroy()
         else:
             self.canvas.move(self.rocket, 0, 10)
-            self.canvas.after(50, self.move)
+            self.canvas.after(100, self.move)
 
             self.__check_radars_for_damage()
             self.__check_air_defense_for_damage()
@@ -36,6 +36,7 @@ class HugeRocket:
 
     def destroy(self):
         self.canvas.delete(self.rocket)
+        State().remove("huge_rocket", self)
         self.rocket = None
 
     def __check_radars_for_damage(self):

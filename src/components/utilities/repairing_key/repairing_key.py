@@ -1,5 +1,6 @@
+from src.components.interfaces.points_sensor import PointsSensor
+from src.constants import repairing_key_cost
 from src.states.state import State
-
 
 class RepairingKey:
     def __init__(self, canvas, screen_width, screen_height, tool_panel):
@@ -7,6 +8,11 @@ class RepairingKey:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.tool_panel = tool_panel
+
+        self.point_sensor = PointsSensor(canvas, screen_width, screen_height)
+        self.is_disabled = True
+
+        # self.is_disabled = self.point_sensor.counter <= repairing_key_cost
 
         self.repair_key = self.create()
 
@@ -16,17 +22,26 @@ class RepairingKey:
     def create(self):
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
+        color = "gray"
+        if not self.is_disabled:
+            color = "yellow"
+
         return self.canvas.create_rectangle(
             tp_x0 + 10, tp_y0 + 5,
             tp_x0 + 30, tp_y0 + 20,
-            fill="yellow",
+            fill=color,
             tags="draggable")
 
     def on_drag_start(self, event):
+        print(self.point_sensor.counter, repairing_key_cost)
+        if self.is_disabled:
+            return
         self.key_start_x0 = event.x
         self.key_start_y0 = event.y
 
     def on_drag_move(self, event):
+        if self.is_disabled:
+            return
         dx = event.x - self.key_start_x0
         dy = event.y - self.key_start_y0
 
@@ -36,6 +51,8 @@ class RepairingKey:
         self.key_start_y0 = event.y
 
     def on_drag_release(self, _):
+        if self.is_disabled:
+            return
         x1, y1, x2, y2 = self.canvas.coords(self.repair_key)
 
         self.__heal_wall_cell(x1, y1, x2, y2)
@@ -85,4 +102,4 @@ class RepairingKey:
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
         self.canvas.coords(self.repair_key,
                            tp_x0 + 10, tp_y0 + 5,
-                           tp_x0 + 30, tp_y0 + 20,)
+                           tp_x0 + 30, tp_y0 + 20)
