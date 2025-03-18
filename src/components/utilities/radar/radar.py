@@ -1,3 +1,6 @@
+from src.components.effects.explosion import Explosion
+
+
 class Radar:
     def __init__(self, canvas, screen_width, screen_height, radar_number):
         self.canvas = canvas
@@ -44,6 +47,9 @@ class Radar:
 
     def hit(self):
         self.canvas.itemconfig(self.radar["item"], fill="yellow")
+
+        radar_coordinates = self.canvas.coords(self.radar["item"])
+        Explosion(self.canvas).show(radar_coordinates[0], radar_coordinates[1])
 
     def destroy(self):
         self.canvas.delete(self.radar["item"])

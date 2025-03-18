@@ -1,4 +1,7 @@
 import random
+
+from src.components.interfaces.points_sensor import PointsSensor
+from src.constants import anti_rocket_cost
 from src.states.state import State
 
 class AntiRocket:
@@ -9,6 +12,11 @@ class AntiRocket:
         self.tool_panel = tool_panel
         self.rocket_platform = rocket_platform
 
+        self.is_disabled = True
+
+        self.point_sensor = PointsSensor(canvas, screen_width, screen_height)
+        self.point_sensor.anti_rocket = self
+
         self.anti_rocket = self.create()
 
         self.key_start_x0 = 0
@@ -17,17 +25,27 @@ class AntiRocket:
     def create(self):
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
+        color = "gray"
+        if not self.is_disabled:
+            color = "blue"
+
         return self.canvas.create_rectangle(
             tp_x0 + 160, tp_y0 + 5,
             tp_x0 + 180, tp_y0 + 20,
-            fill="blue",
+            fill=color,
             tags="draggable_rocket")
 
     def on_drag_start(self, event):
+        if self.is_disabled:
+            return
+
         self.key_start_x0 = event.x
         self.key_start_y0 = event.y
 
     def on_drag_move(self, event):
+        if self.is_disabled:
+            return
+
         dx = event.x - self.key_start_x0
         dy = event.y - self.key_start_y0
 
@@ -36,7 +54,11 @@ class AntiRocket:
         self.key_start_x0 = event.x
         self.key_start_y0 = event.y
 
-    def on_drag_release(self, _):
+    def on_drag_release(self, event):
+        print(event)
+        if self.is_disabled:
+            return
+
         x1, y1, x2, y2 = self.canvas.coords(self.rocket_platform)
 
         platform_center_y = (y1 + y2) / 2
@@ -50,6 +72,8 @@ class AntiRocket:
             ax2,
             platform_center_y + 7.5
         )
+        self.point_sensor.decrease(anti_rocket_cost)
+        self.recalculate()
 
     def launch_rocket(self, event):
         self.move()
@@ -59,7 +83,7 @@ class AntiRocket:
             return
         _, rocket_y0, _, _ = self.canvas.coords(self.anti_rocket)
 
-        if rocket_y0 < 10:
+        if rocket_y0 < 5:
             self.destroy()
         else:
             self.canvas.move(self.anti_rocket, 0, -10)
@@ -69,8 +93,14 @@ class AntiRocket:
             self.__check_huge_rockets_for_damage()
 
     def destroy(self):
-        self.canvas.delete(self.anti_rocket)
-        self.anti_rocket = None
+        self.__reset_position()
+
+    def recalculate(self):
+        self.is_disabled = self.point_sensor.counter < anti_rocket_cost
+        if not self.is_disabled:
+            self.canvas.itemconfig(self.anti_rocket, fill="blue")
+        else:
+            self.canvas.itemconfig(self.anti_rocket, fill="gray")
 
     def __check_huge_rockets_for_damage(self):
         if not self.anti_rocket:
@@ -91,3 +121,11 @@ class AntiRocket:
                 self.destroy()
                 huge_rocket.destroy()
                 return
+
+    def __reset_position(self):
+        tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
+
+        self.recalculate()
+        self.canvas.coords(self.anti_rocket,
+                           tp_x0 + 160, tp_y0 + 5,
+                           tp_x0 + 180, tp_y0 + 20)

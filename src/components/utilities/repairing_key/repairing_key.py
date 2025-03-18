@@ -1,5 +1,5 @@
 from src.components.interfaces.points_sensor import PointsSensor
-from src.constants import repairing_key_cost
+from src.constants import repairing_key_radar_cost, repairing_key_wall_cost, repairing_key_air_defense_cost
 from src.states.state import State
 
 class RepairingKey:
@@ -14,7 +14,7 @@ class RepairingKey:
         self.point_sensor.repairing_key = self
 
         self.repair_key = self.create()
-        self.recalculate_properties()
+        self.recalculate()
 
         self.key_start_x0 = 0
         self.key_start_y0 = 0
@@ -35,12 +35,14 @@ class RepairingKey:
     def on_drag_start(self, event):
         if self.is_disabled:
             return
+
         self.key_start_x0 = event.x
         self.key_start_y0 = event.y
 
     def on_drag_move(self, event):
         if self.is_disabled:
             return
+
         dx = event.x - self.key_start_x0
         dy = event.y - self.key_start_y0
 
@@ -52,6 +54,7 @@ class RepairingKey:
     def on_drag_release(self, _):
         if self.is_disabled:
             return
+
         x1, y1, x2, y2 = self.canvas.coords(self.repair_key)
 
         self.__heal_wall_cell(x1, y1, x2, y2)
@@ -60,8 +63,8 @@ class RepairingKey:
 
         self.__reset_repairing_key()
 
-    def recalculate_properties(self):
-        self.is_disabled = self.point_sensor.counter < repairing_key_cost
+    def recalculate(self):
+        self.is_disabled = self.point_sensor.counter < repairing_key_wall_cost
         if not self.is_disabled:
             self.canvas.itemconfig(self.repair_key, fill="yellow")
         else:
@@ -75,9 +78,10 @@ class RepairingKey:
 
             cx1, cy1, cx2, cy2 = self.canvas.coords(cell)
             if x1 < cx2 and x2 > cx1 and y1 < cy2 and y2 > cy1:
-                self.canvas.itemconfig(cell, state="normal")
-                self.point_sensor.decrease(repairing_key_cost)
-                self.recalculate_properties()
+                if self.point_sensor.counter >= repairing_key_wall_cost:
+                    self.canvas.itemconfig(cell, state="normal")
+                    self.point_sensor.decrease(repairing_key_wall_cost)
+                    self.recalculate()
                 self.__reset_repairing_key()
                 return
 
@@ -85,7 +89,7 @@ class RepairingKey:
         radars_for_healing = [
             radar for radar in State().get_data("radars")
                 if len(self.canvas.coords(radar.radar["item"])) != 0
-                    and radar.radar["hp"] != 0
+                    and radar.radar["hp"] == 1
         ]
 
         for radar in radars_for_healing:
@@ -93,20 +97,32 @@ class RepairingKey:
             rx1, ry1, rx2, ry2 = self.canvas.coords(radar_object["item"])
 
             if x1 >= rx1 and x2 <= rx2 and y1 >= ry1 and y2 <= ry2:
-                radar.heal()
+                if self.point_sensor.counter >= repairing_key_radar_cost:
+                    self.point_sensor.decrease(repairing_key_radar_cost)
+                    self.recalculate()
+                    radar.heal()
 
                 self.__reset_repairing_key()
 
                 return
 
     def __heal_air_defense(self, x1, y1, x2, y2):
-        for air_device in State().get_data("air_defense"):
+        air_defense_for_healing = [
+            air_device for air_device in State().get_data("air_defense")
+            if len(self.canvas.coords(air_device.device["item"])) != 0
+               and air_device.device["hp"] == 1
+        ]
+
+        for air_device in air_defense_for_healing:
             device_object = air_device.device
 
             dx1, dy1, dx2, dy2 = self.canvas.coords(device_object["item"])
 
             if x1 >= dx1 and x2 <= dx2 and y1 >= dy1 and y2 <= dy2:
-                air_device.heal()
+                if self.point_sensor.counter >= repairing_key_air_defense_cost:
+                    air_device.heal()
+                    self.point_sensor.decrease(repairing_key_air_defense_cost)
+                    self.recalculate()
 
                 self.__reset_repairing_key()
 

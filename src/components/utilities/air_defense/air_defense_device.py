@@ -1,3 +1,6 @@
+from src.components.effects.explosion import Explosion
+
+
 class AirDefenseDevice:
     def __init__(self, canvas, coordinates, colors):
         self.canvas = canvas
@@ -66,6 +69,9 @@ class AirDefenseDevice:
 
     def hit(self):
         self.canvas.itemconfig(self.device["item"], fill="yellow")
+
+        device_coordinates = self.canvas.coords(self.device["item"])
+        Explosion(self.canvas).show(device_coordinates[0], device_coordinates[1])
 
     def destroy(self):
         self.canvas.delete(self.device["item"])

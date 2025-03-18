@@ -1,3 +1,6 @@
+from src.constants import letter_cost
+
+
 class PointsSensor:
     _instance = None
 
@@ -17,6 +20,8 @@ class PointsSensor:
             self.initialized = True
 
             self.repairing_key = None
+            self.movable_wall = None
+            self.anti_rocket = None
 
     def create(self):
         return self.canvas.create_text(50, self.screen_height - 60,
@@ -31,8 +36,12 @@ class PointsSensor:
         self.__update_counter_display()
 
     def increase(self):
-        self.counter += 5 # user can get points only for hitting letter using tank
-        self.repairing_key.recalculate_properties()
+        self.counter += letter_cost # user can get points only for hitting letter using tank
+
+        self.repairing_key.recalculate()
+        self.movable_wall.recalculate()
+        self.anti_rocket.recalculate()
+
         self.__update_counter_display()
 
     def __update_counter_display(self):

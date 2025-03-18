@@ -1,5 +1,6 @@
 from tkinter import *
 
+from src.components.effects.explosion import Explosion
 from src.components.interfaces.missed_shots_sensor import MissedShotsSensor
 from src.components.interfaces.points_sensor import PointsSensor
 from src.components.tanks.computer_tank import ComputerTank
@@ -24,6 +25,9 @@ root.resizable(False, False)
 canvas = Canvas(root)
 canvas.config(width=screen_width, height=screen_height)
 canvas.grid(column=0, row=0)
+
+# Explosion
+explosion = Explosion(canvas)
 
 # Storages
 falling_letters = []
@@ -53,7 +57,7 @@ tool_panel = canvas.create_rectangle(screen_width / 2 - 100, screen_height - 60,
 repairing_key = RepairingKey(canvas, screen_width, screen_height, tool_panel)
 
 # Movable wall
-movable_wall = MovableWall(canvas, tool_panel)
+movable_wall = MovableWall(canvas, screen_width, screen_height, tool_panel)
 
 # Anti-rocket
 anti_rocket = AntiRocket(canvas, screen_width, screen_height, tool_panel, rocket_platform)

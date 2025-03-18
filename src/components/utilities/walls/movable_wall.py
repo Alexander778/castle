@@ -1,24 +1,34 @@
+from src.components.interfaces.points_sensor import PointsSensor
+from src.constants import movable_wall_cost
 from src.states.state import State
 
 
 class MovableWall:
-    def __init__(self, canvas, tool_panel):
+    def __init__(self, canvas, screen_width, screen_height, tool_panel):
         self.canvas = canvas
         self.tool_panel = tool_panel
 
         self.key_start_x0 = 0
         self.key_start_y0 = 0
+        self.is_disabled = True
         self.is_active = False
+
+        self.point_sensor = PointsSensor(canvas, screen_width, screen_height)
+        self.point_sensor.movable_wall = self
 
         self.wall_object = self.create()
 
     def create(self):
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
+        color = "gray"
+        if not self.is_disabled:
+            color = "coral"
+
         movable_wall = self.canvas.create_rectangle(
             tp_x0 + 50, tp_y0 + 5,
             tp_x0 + 150, tp_y0 + 20,
-            fill="coral",
+            fill=color,
             tags="drag_movable_wall")
 
         return {
@@ -27,14 +37,14 @@ class MovableWall:
         }
 
     def on_drag_start(self, event):
-        if self.is_active is True:
+        if self.is_active or self.is_disabled:
             return
 
         self.key_start_x0 = event.x
         self.key_start_y0 = event.y
 
     def on_drag_move(self, event):
-        if self.is_active is True:
+        if self.is_active or self.is_disabled:
             return
 
         dx = event.x - self.key_start_x0
@@ -46,9 +56,12 @@ class MovableWall:
         self.key_start_y0 = event.y
 
     def on_drag_release(self, _):
-        if self.is_active is True:
+        if self.is_active or self.is_disabled:
             return
+
         self.move_to_new_position()
+        self.point_sensor.decrease(movable_wall_cost)
+        self.recalculate()
 
     def move_to_new_position(self):
         self.is_active = True
@@ -80,6 +93,7 @@ class MovableWall:
 
             if self.wall_object["hp"] == 0:
                 self.__reset_position_key()
+                return
 
         step_size = min(10, abs(w_x0 - cl_x0))
         if w_x0 < cl_x0:
@@ -88,6 +102,15 @@ class MovableWall:
             self.canvas.move(wall_item, -step_size, 0)
 
         self.canvas.after(move_after_timeout, self.move_to_new_position)
+
+    def recalculate(self):
+        if self.is_active:
+            return
+        self.is_disabled = self.point_sensor.counter < movable_wall_cost
+        if not self.is_disabled:
+            self.canvas.itemconfig(self.wall_object["item"], fill="coral")
+        else:
+            self.canvas.itemconfig(self.wall_object["item"], fill="gray")
 
     def __get_move_timeout(self):
         wall_hp = self.wall_object["hp"]
@@ -137,8 +160,9 @@ class MovableWall:
 
         self.is_active = False
         self.wall_object["hp"] = 9
+        self.recalculate()
         self.canvas.coords(self.wall_object["item"],
-                           tp_x0 + 80, tp_y0 + 10,
-                           tp_x0 + 150, tp_y0 + 30)
+                           tp_x0 + 50, tp_y0 + 5,
+                           tp_x0 + 150, tp_y0 + 20)
 
 

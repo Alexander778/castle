@@ -1,4 +1,6 @@
 import random
+
+from src.components.effects.explosion import Explosion
 from src.constants import alphabet, small_letter_color, big_letter_color
 from src.states.state import State
 
@@ -122,5 +124,6 @@ class FallingLetter:
 
             if abs(falling_letter_y0 - cell_y0) < 15:
                 self.canvas.itemconfig(cell, state="hidden")
+                Explosion(self.canvas).show(cell_x0, cell_y0)
                 self.destroy()
                 return
