@@ -1,5 +1,6 @@
 import random
 from src.states.state import State
+from PIL import Image, ImageTk
 
 class HugeRocket:
     def __init__(self, canvas, screen_width, screen_height):
@@ -7,24 +8,28 @@ class HugeRocket:
         self.screen_width = screen_width
         self.screen_height = screen_height
 
+        self.huge_rocket_image = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/huge_rocket.png")
+            # TODO replace with relative path
+        )
+        self.huge_rocket_image_width = self.huge_rocket_image.width()
+        self.huge_rocket_image_height = self.huge_rocket_image.height()
+
         self.rocket = self.create()
 
     def create(self):
         launch_position = random.randrange(0, self.screen_width - 100)
 
-        return self.canvas.create_rectangle(
-            launch_position,
-            0,
-            launch_position + 5,
-            25,
-            fill='red')
+        return self.canvas.create_image(
+            launch_position, 0,
+            image=self.huge_rocket_image, anchor="nw")
 
     def move(self):
         if self.rocket is None or len(self.canvas.coords(self.rocket)) == 0:
             return
-        _, _, _, rocket_y1 = self.canvas.coords(self.rocket)
+        _, rocket_y0 = self.canvas.coords(self.rocket)
 
-        if abs(rocket_y1 - self.screen_height) < 100:
+        if abs(rocket_y0 + self.huge_rocket_image_height - self.screen_height) < 100:
             self.destroy()
         else:
             self.canvas.move(self.rocket, 0, 10)
@@ -43,12 +48,15 @@ class HugeRocket:
         if not self.rocket:
             return
 
-        rocket_x0, rocket_y0, rocket_x1, rocket_y1 = self.canvas.coords(self.rocket)
+        rocket_x0, rocket_y0 = self.canvas.coords(self.rocket)
+        rocket_x1 = rocket_x0 + self.huge_rocket_image_width
+        rocket_y1 = rocket_y0 + self.huge_rocket_image_height
+
         potentially_damaged_radars = [
             radar for radar in State().get_data("radars")
             if len(self.canvas.coords(radar.radar["item"])) != 0
                and self.canvas.coords(radar.radar["item"])[0] <= rocket_x1 <=
-                self.canvas.coords(radar.radar["item"])[2]
+                self.canvas.coords(radar.radar["item"])[0] + radar.radar["image"].width()
                and radar.radar["hp"] != 0
         ]
 
@@ -65,7 +73,9 @@ class HugeRocket:
         if not self.rocket:
             return
 
-        rocket_x0, rocket_y0, rocket_x1, rocket_y1 = self.canvas.coords(self.rocket)
+        rocket_x0, rocket_y0 = self.canvas.coords(self.rocket)
+        rocket_y1 = rocket_y0 + self.huge_rocket_image_height
+
         potentially_damaged_air_defenses = [
             air_defense for air_defense in State().get_data("air_defense")
             if len(self.canvas.coords(air_defense.device["item"])) != 0
@@ -86,7 +96,8 @@ class HugeRocket:
         if not self.rocket:
             return
 
-        rocket_x0, rocket_y0, rocket_x1, rocket_y1 = self.canvas.coords(self.rocket)
+        rocket_x0, rocket_y0 = self.canvas.coords(self.rocket)
+
         potentially_damaged_cells = [
             cell for cell in State().get_data("wall_cells")
             if self.canvas.coords(cell)[0] <= rocket_x0
@@ -94,8 +105,8 @@ class HugeRocket:
         ]
 
         for cell in potentially_damaged_cells:
-            cell_x0, cell_y0, _, _ = self.canvas.coords(cell)
-            rocket_x0, rocket_y0, _, _ = self.canvas.coords(self.rocket)
+            cell_x0, cell_y0 = self.canvas.coords(cell)
+            rocket_x0, rocket_y0 = self.canvas.coords(self.rocket)
 
             if abs(rocket_x0 - cell_x0) < 15 and abs(rocket_y0 - cell_y0) < 15:
                 column_tag = self.canvas.gettags(cell)[1]

@@ -3,7 +3,7 @@ from src.components.interfaces.missed_shots_sensor import MissedShotsSensor
 from src.components.interfaces.points_sensor import PointsSensor
 from src.components.utilities.rockets.huge_rocket import HugeRocket
 from src.states.state import State
-
+from PIL import Image, ImageTk
 
 class UserTank:
     def __init__(self, canvas, screen_width, screen_height):
@@ -13,12 +13,14 @@ class UserTank:
 
         self.new_position_for_shot_x0 = 0
 
-        self.tank = self.canvas.create_rectangle(
+        self.image = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/user_tank.png")
+            # TODO replace with relative path
+        )
+
+        self.tank = self.canvas.create_image(
             screen_width / 2,
-            screen_height - 130,
-            screen_width / 2 + 100,
-            screen_height - 85,
-            fill='brown')
+            screen_height - 135, image=self.image, anchor="nw")
 
         self.sight = self.canvas.create_line(
             0, 10,
@@ -50,7 +52,7 @@ class UserTank:
         current_x0 = current_position[0]
         current_y0 = current_position[1]
 
-        letter = self.canvas.create_text(current_x0 + 50, current_y0 - 10, text=letter, fill=letter_symbol_color)
+        letter = self.canvas.create_text(current_x0 + 55, current_y0 - 10, text=letter, fill=letter_symbol_color)
 
         self.move_letter(letter)
 

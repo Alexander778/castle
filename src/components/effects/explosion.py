@@ -14,6 +14,6 @@ class Explosion:
                 Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/explosion.png") # TODO replace with relative path
             )
 
-    def show(self, x, y):
+    def show(self, x, y, disappear_after_ms = 600):
         image_id = self.canvas.create_image(x, y, image=Explosion._explosion_image)
-        self.canvas.after(600, lambda: self.canvas.delete(image_id))
+        self.canvas.after(disappear_after_ms, lambda: self.canvas.delete(image_id))

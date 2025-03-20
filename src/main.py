@@ -73,7 +73,7 @@ computer_tank = ComputerTank(canvas, screen_width, screen_height)
 user_tank = UserTank(canvas, screen_width, screen_height)
 
 # Binders
-root.after(1000, computer_tank.move_to_new_position(), None)
+root.after(100, computer_tank.move_to_new_position(), None)
 
 root.bind("<Left>", user_tank.move_tank_left)
 root.bind("<Right>", user_tank.move_tank_right)

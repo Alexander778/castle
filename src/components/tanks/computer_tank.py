@@ -1,7 +1,7 @@
 import random
 from src.components.letters.failing_letter import FallingLetter
 from src.states.state import State
-
+from PIL import Image, ImageTk
 
 class ComputerTank:
     def __init__(self, canvas, screen_width, screen_height):
@@ -11,10 +11,13 @@ class ComputerTank:
 
         self.new_position_for_shot_x0 = 0
         self.is_damaged = False
-        self.tank = self.canvas.create_rectangle(
-            0, 10,
-            100, 40,
-            fill='gray')
+
+        self.image = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/computer_tank.png")
+            # TODO replace with relative path
+        )
+
+        self.tank = self.canvas.create_image(0, 5, image=self.image, anchor="nw")
 
     def move_to_new_position(self):
         current_tank_position = self.canvas.coords(self.tank)
@@ -42,5 +45,4 @@ class ComputerTank:
                                current_tank_position_x0)
 
         State().append("letters", letter)
-
         letter.move()

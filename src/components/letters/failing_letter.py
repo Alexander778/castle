@@ -23,7 +23,7 @@ class FallingLetter:
             letter_symbol = letter_symbol.upper()
             letter_symbol_color = big_letter_color
 
-        letter_item = self.canvas.create_text(self.tank_current_position_x0 + 50, 60,
+        letter_item = self.canvas.create_text(self.tank_current_position_x0 + 50, 75,
                                        text=letter_symbol,
                                        fill=letter_symbol_color)
 
@@ -64,7 +64,7 @@ class FallingLetter:
             radar for radar in State().get_data("radars")
             if len(self.canvas.coords(radar.radar["item"])) != 0
             and self.canvas.coords(radar.radar["item"])[0] <= falling_letter_x0 <=
-                self.canvas.coords(radar.radar["item"])[2]
+                self.canvas.coords(radar.radar["item"])[0] + radar.radar["image"].width()
             and radar.radar["hp"] != 0
         ]
 
@@ -72,7 +72,7 @@ class FallingLetter:
             radar_object = radar.radar
             radar_item = radar_object["item"]
 
-            radar_x0, radar_y0, radar_x1, _ = self.canvas.coords(radar_item)
+            radar_x0, radar_y0 = self.canvas.coords(radar_item)
 
             if abs(falling_letter_y0 - radar_y0) < 15:
                 radar_object["hp"] -= 1
@@ -120,7 +120,8 @@ class FallingLetter:
         ]
 
         for cell in potentially_damaged_cells:
-            cell_x0, cell_y0, _, _ = self.canvas.coords(cell)
+            cell_x0, cell_y0 = self.canvas.coords(cell)
+            print(falling_letter_y0, cell_y0)
 
             if abs(falling_letter_y0 - cell_y0) < 15:
                 self.canvas.itemconfig(cell, state="hidden")

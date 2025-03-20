@@ -1,5 +1,4 @@
-import random
-
+from PIL import Image, ImageTk
 from src.components.interfaces.points_sensor import PointsSensor
 from src.constants import anti_rocket_cost
 from src.states.state import State
@@ -17,10 +16,20 @@ class AntiRocket:
         self.point_sensor = PointsSensor(canvas, screen_width, screen_height)
         self.point_sensor.anti_rocket = self
 
-        self.anti_rocket = self.create()
-
         self.key_start_x0 = 0
         self.key_start_y0 = 0
+
+        self.inactive = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/anti_rocket_inactive.png")
+            # TODO replace with relative path
+        )
+
+        self.active = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/anti_rocket_active.png")
+            # TODO replace with relative path
+        )
+
+        self.anti_rocket = self.create()
 
     def create(self):
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
@@ -29,10 +38,9 @@ class AntiRocket:
         if not self.is_disabled:
             color = "blue"
 
-        return self.canvas.create_rectangle(
+        return self.canvas.create_image(
             tp_x0 + 160, tp_y0 + 5,
-            tp_x0 + 180, tp_y0 + 20,
-            fill=color,
+            image=self.inactive, anchor="nw",
             tags="draggable_rocket")
 
     def on_drag_start(self, event):
