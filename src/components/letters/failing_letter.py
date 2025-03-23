@@ -51,7 +51,7 @@ class FallingLetter:
             self.canvas.after(500, self.move)
 
             self.__check_radars_for_damage()
-            self.__check_air_defense_for_damage()
+            # self.__check_air_defense_for_damage()
             self.__check_wall_for_damage()
 
     def destroy(self):
@@ -121,7 +121,6 @@ class FallingLetter:
 
         for cell in potentially_damaged_cells:
             cell_x0, cell_y0 = self.canvas.coords(cell)
-            print(falling_letter_y0, cell_y0)
 
             if abs(falling_letter_y0 - cell_y0) < 15:
                 self.canvas.itemconfig(cell, state="hidden")

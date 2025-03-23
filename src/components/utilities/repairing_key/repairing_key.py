@@ -1,6 +1,7 @@
 from src.components.interfaces.points_sensor import PointsSensor
 from src.constants import repairing_key_radar_cost, repairing_key_wall_cost, repairing_key_air_defense_cost
 from src.states.state import State
+from PIL import Image, ImageTk
 
 class RepairingKey:
     def __init__(self, canvas, screen_width, screen_height, tool_panel):
@@ -13,6 +14,10 @@ class RepairingKey:
         self.point_sensor = PointsSensor(canvas, screen_width, screen_height)
         self.point_sensor.repairing_key = self
 
+        self.image = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/repairing-key.png")
+            # TODO replace with relative path
+        )
         self.repair_key = self.create()
         self.recalculate()
 
@@ -26,11 +31,9 @@ class RepairingKey:
         if not self.is_disabled:
             color = "yellow"
 
-        return self.canvas.create_rectangle(
+        return self.canvas.create_image(
             tp_x0 + 10, tp_y0 + 5,
-            tp_x0 + 30, tp_y0 + 20,
-            fill=color,
-            tags="draggable")
+            image=self.image, anchor="nw")
 
     def on_drag_start(self, event):
         if self.is_disabled:
@@ -65,10 +68,10 @@ class RepairingKey:
 
     def recalculate(self):
         self.is_disabled = self.point_sensor.counter < repairing_key_wall_cost
-        if not self.is_disabled:
-            self.canvas.itemconfig(self.repair_key, fill="yellow")
-        else:
-            self.canvas.itemconfig(self.repair_key, fill="gray")
+        # if not self.is_disabled:
+        #     self.canvas.itemconfig(self.repair_key, fill="yellow")
+        # else:
+        #     self.canvas.itemconfig(self.repair_key, fill="gray")
 
     def __heal_wall_cell(self, x1, y1, x2, y2):
         for cell in State().get_data("wall_cells"):

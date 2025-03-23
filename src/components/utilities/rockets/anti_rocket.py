@@ -39,7 +39,7 @@ class AntiRocket:
             color = "blue"
 
         return self.canvas.create_image(
-            tp_x0 + 160, tp_y0 + 5,
+            tp_x0 + 250, tp_y0,
             image=self.inactive, anchor="nw",
             tags="draggable_rocket")
 
@@ -63,7 +63,6 @@ class AntiRocket:
         self.key_start_y0 = event.y
 
     def on_drag_release(self, event):
-        print(event)
         if self.is_disabled:
             return
 

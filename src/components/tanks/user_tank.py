@@ -54,6 +54,7 @@ class UserTank:
 
         letter = self.canvas.create_text(current_x0 + 55, current_y0 - 10, text=letter, fill=letter_symbol_color)
 
+        Explosion(self.canvas).show(current_x0 + 56, current_y0 - 3, 300)
         self.move_letter(letter)
 
     def move_letter(self, fired_letter):

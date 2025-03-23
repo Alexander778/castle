@@ -1,7 +1,7 @@
 from src.components.interfaces.points_sensor import PointsSensor
 from src.constants import movable_wall_cost
 from src.states.state import State
-
+from PIL import Image, ImageTk
 
 class MovableWall:
     def __init__(self, canvas, screen_width, screen_height, tool_panel):
@@ -16,6 +16,11 @@ class MovableWall:
         self.point_sensor = PointsSensor(canvas, screen_width, screen_height)
         self.point_sensor.movable_wall = self
 
+        self.image = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/movable_wall.png")
+            # TODO replace with relative path
+        )
+
         self.wall_object = self.create()
 
     def create(self):
@@ -25,14 +30,13 @@ class MovableWall:
         if not self.is_disabled:
             color = "coral"
 
-        movable_wall = self.canvas.create_rectangle(
-            tp_x0 + 50, tp_y0 + 5,
-            tp_x0 + 150, tp_y0 + 20,
-            fill=color,
-            tags="drag_movable_wall")
+        movable_wall = self.canvas.create_image(
+            tp_x0 + 50, tp_y0 - 10,
+            image=self.image, anchor="nw")
 
         return {
             "item": movable_wall,
+            "image": self.image,
             "hp": 9
         }
 
