@@ -16,27 +16,34 @@ class MovableWall:
         self.point_sensor = PointsSensor(canvas, screen_width, screen_height)
         self.point_sensor.movable_wall = self
 
-        self.image = ImageTk.PhotoImage(
-            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/movable_wall.png")
+        self.active_img = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/movable_wall/movable_wall.png")
             # TODO replace with relative path
         )
+
+        self.disabled_img = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/movable_wall/movable_wall_disabled.png")
+            # TODO replace with relative path
+        )
+        self.movable_wall = None
 
         self.wall_object = self.create()
 
     def create(self):
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
-        color = "gray"
-        if not self.is_disabled:
-            color = "coral"
-
-        movable_wall = self.canvas.create_image(
+        self.movable_wall = self.canvas.create_image(
             tp_x0 + 50, tp_y0 - 10,
-            image=self.image, anchor="nw")
+            image=self.disabled_img, anchor="nw")
+
+        if not self.is_disabled:
+            self.movable_wall = self.canvas.create_image(
+                tp_x0 + 50, tp_y0 - 10,
+                image=self.active_img, anchor="nw")
 
         return {
-            "item": movable_wall,
-            "image": self.image,
+            "item": self.movable_wall,
+            "image": self.active_img,
             "hp": 9
         }
 
@@ -112,9 +119,9 @@ class MovableWall:
             return
         self.is_disabled = self.point_sensor.counter < movable_wall_cost
         if not self.is_disabled:
-            self.canvas.itemconfig(self.wall_object["item"], fill="coral")
+            self.canvas.itemconfig(self.movable_wall, image=self.active_img)
         else:
-            self.canvas.itemconfig(self.wall_object["item"], fill="gray")
+            self.canvas.itemconfig(self.movable_wall, image=self.disabled_img)
 
     def __get_move_timeout(self):
         wall_hp = self.wall_object["hp"]

@@ -19,13 +19,18 @@ class AntiRocket:
         self.key_start_x0 = 0
         self.key_start_y0 = 0
 
-        self.inactive = ImageTk.PhotoImage(
-            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/anti_rocket_inactive.png")
+        self.disabled_img = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/anti_rocket/anti_rocket_disabled.png")
             # TODO replace with relative path
         )
 
-        self.active = ImageTk.PhotoImage(
-            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/anti_rocket_active.png")
+        self.inactive_img = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/anti_rocket/anti_rocket_inactive.png")
+            # TODO replace with relative path
+        )
+
+        self.active_img = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/anti_rocket/anti_rocket_active.png")
             # TODO replace with relative path
         )
 
@@ -34,14 +39,15 @@ class AntiRocket:
     def create(self):
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
-        color = "gray"
-        if not self.is_disabled:
-            color = "blue"
-
-        return self.canvas.create_image(
+        anti_rocket = self.canvas.create_image(
             tp_x0 + 250, tp_y0,
-            image=self.inactive, anchor="nw",
+            image=self.disabled_img, anchor="nw",
             tags="draggable_rocket")
+
+        if not self.is_disabled:
+            self.canvas.itemconfig(anti_rocket, image=self.inactive_img)
+
+        return anti_rocket
 
     def on_drag_start(self, event):
         if self.is_disabled:
@@ -105,9 +111,9 @@ class AntiRocket:
     def recalculate(self):
         self.is_disabled = self.point_sensor.counter < anti_rocket_cost
         if not self.is_disabled:
-            self.canvas.itemconfig(self.anti_rocket, fill="blue")
+            self.canvas.itemconfig(self.anti_rocket, image=self.inactive_img)
         else:
-            self.canvas.itemconfig(self.anti_rocket, fill="gray")
+            self.canvas.itemconfig(self.anti_rocket, image=self.disabled_img)
 
     def __check_huge_rockets_for_damage(self):
         if not self.anti_rocket:

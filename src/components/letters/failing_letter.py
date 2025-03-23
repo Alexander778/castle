@@ -51,7 +51,7 @@ class FallingLetter:
             self.canvas.after(500, self.move)
 
             self.__check_radars_for_damage()
-            # self.__check_air_defense_for_damage()
+            self.__check_air_defense_for_damage()
             self.__check_wall_for_damage()
 
     def destroy(self):
@@ -87,17 +87,19 @@ class FallingLetter:
 
     def __check_air_defense_for_damage(self):
         falling_letter_x0, falling_letter_y0 = self.letter_coordinates
+
         potentially_damaged_air_defenses = [
             air_defense for air_defense in State().get_data("air_defense")
-            if len(self.canvas.coords(air_defense.device["item"])) != 0
-            and self.canvas.coords(air_defense.device["item"])[0] <= falling_letter_x0 <=
-               self.canvas.coords(air_defense.device["item"])[2]
+            if len(self.canvas.coords(air_defense.device["rocket"])) != 0
+            and self.canvas.coords(air_defense.device["rocket"])[0] <= falling_letter_x0 <=
+                   self.canvas.coords(air_defense.device["rocket"])[0]
+               + air_defense.device["rocket_img"].width()
             and air_defense.device["hp"] != 0
         ]
 
         for air_defense in potentially_damaged_air_defenses:
             air_device = air_defense.device
-            air_x0, air_y0, _, _ = self.canvas.coords(air_device["item"])
+            air_x0, air_y0 = self.canvas.coords(air_device["rocket"])
 
             if abs(falling_letter_y0 - air_y0) < 15:
                 air_device["hp"] -= 1

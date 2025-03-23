@@ -7,11 +7,11 @@ class AirDefense:
         self.canvas = canvas
 
         right_device = AirDefenseDevice(canvas,
-                         coordinates=(screen_width - 49, screen_height - 260, screen_width - 70, screen_height - 240),
+                         coordinates=(screen_width - 65, screen_height - 270, screen_width - 70, screen_height - 240),
                          colors={"fill": "white", "outline": big_letter_color}, position="right")
 
         left_device = AirDefenseDevice(canvas,
-                         coordinates=(5, screen_height - 260, 75, screen_height - 240),
+                         coordinates=(35, screen_height - 270, 75, screen_height - 240),
                          colors={"fill": "white", "outline": small_letter_color}, position="left")
 
         State().append("air_defense", right_device)

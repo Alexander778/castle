@@ -1,3 +1,4 @@
+from src.components.effects.damage import Damage
 from src.components.effects.explosion import Explosion
 from PIL import Image, ImageTk
 
@@ -44,13 +45,13 @@ class Radar:
     def heal(self):
         if self.radar["hp"] == 1:
             self.radar["hp"] += 1
-            self.canvas.itemconfig(self.radar["item"], fill="lightgreen")
+            # self.canvas.itemconfig(self.radar["item"], fill="lightgreen")
 
     def hit(self):
-        self.canvas.itemconfig(self.radar["item"], fill="yellow")
-
         radar_coordinates = self.canvas.coords(self.radar["item"])
+
         Explosion(self.canvas).show(radar_coordinates[0], radar_coordinates[1])
+        Damage(self.canvas).show(radar_coordinates[0], radar_coordinates[1])
 
     def destroy(self):
         self.canvas.delete(self.radar["item"])

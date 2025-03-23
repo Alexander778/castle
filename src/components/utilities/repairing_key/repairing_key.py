@@ -14,8 +14,12 @@ class RepairingKey:
         self.point_sensor = PointsSensor(canvas, screen_width, screen_height)
         self.point_sensor.repairing_key = self
 
-        self.image = ImageTk.PhotoImage(
-            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/repairing-key.png")
+        self.active_img = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/repairing_key/repairing-key.png")
+            # TODO replace with relative path
+        )
+        self.disabled_img = ImageTk.PhotoImage(
+            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/repairing_key/repairing-key-disabled.png")
             # TODO replace with relative path
         )
         self.repair_key = self.create()
@@ -27,13 +31,14 @@ class RepairingKey:
     def create(self):
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
-        color = "gray"
-        if not self.is_disabled:
-            color = "yellow"
-
-        return self.canvas.create_image(
+        key = self.canvas.create_image(
             tp_x0 + 10, tp_y0 + 5,
-            image=self.image, anchor="nw")
+            image=self.disabled_img, anchor="nw")
+
+        if not self.is_disabled:
+            self.canvas.itemconfig(key, image=self.active_img)
+
+        return key
 
     def on_drag_start(self, event):
         if self.is_disabled:
@@ -68,10 +73,10 @@ class RepairingKey:
 
     def recalculate(self):
         self.is_disabled = self.point_sensor.counter < repairing_key_wall_cost
-        # if not self.is_disabled:
-        #     self.canvas.itemconfig(self.repair_key, fill="yellow")
-        # else:
-        #     self.canvas.itemconfig(self.repair_key, fill="gray")
+        if not self.is_disabled:
+            self.canvas.itemconfig(self.repair_key, image=self.active_img)
+        else:
+            self.canvas.itemconfig(self.repair_key, image=self.disabled_img)
 
     def __heal_wall_cell(self, x1, y1, x2, y2):
         for cell in State().get_data("wall_cells"):

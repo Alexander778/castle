@@ -68,10 +68,10 @@ class UserTank:
             falling_x, falling_y = self.canvas.coords(falling_letter.letter_item)
 
             if abs(fired_letter_x0 - falling_x) < 20 and abs(fired_letter_y0 - falling_y) < 20:
+                Explosion(self.canvas).show(fired_letter_x0, fired_letter_y0)
                 self.canvas.delete(fired_letter)
                 falling_letter.destroy()
                 PointsSensor(self.canvas, self.screen_width, self.screen_height).increase()
-                Explosion(self.canvas).show(fired_letter_x0, fired_letter_y0)
                 return
 
         if fired_letter_y0 < 50:
@@ -82,7 +82,7 @@ class UserTank:
             self.canvas.after(100, self.move_letter, fired_letter)
 
     def show_sight(self, _):
-        user_tank_x0, user_tank_y0, _, _ = self.canvas.coords(self.tank)
+        user_tank_x0, user_tank_y0 = self.canvas.coords(self.tank)
 
         line_length = self.__calculate_sight_length(user_tank_x0)
         if line_length == 0:
