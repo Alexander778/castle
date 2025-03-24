@@ -1,3 +1,4 @@
+from src.components.effects.damage import Damage
 from src.components.interfaces.points_sensor import PointsSensor
 from src.constants import movable_wall_cost
 from src.states.state import State
@@ -16,15 +17,12 @@ class MovableWall:
         self.point_sensor = PointsSensor(canvas, screen_width, screen_height)
         self.point_sensor.movable_wall = self
 
-        self.active_img = ImageTk.PhotoImage(
-            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/movable_wall/movable_wall.png")
-            # TODO replace with relative path
-        )
+        self.active_img = ImageTk.PhotoImage(Image.open("assets/movable_wall/movable_wall.png"))
+        self.disabled_img = ImageTk.PhotoImage(Image.open("assets/movable_wall/movable_wall_disabled.png"))
 
-        self.disabled_img = ImageTk.PhotoImage(
-            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/movable_wall/movable_wall_disabled.png")
-            # TODO replace with relative path
-        )
+        self.image_width = self.active_img.width()
+        self.image_height = self.active_img.height()
+
         self.movable_wall = None
 
         self.wall_object = self.create()
@@ -34,12 +32,12 @@ class MovableWall:
 
         self.movable_wall = self.canvas.create_image(
             tp_x0 + 50, tp_y0 - 10,
-            image=self.disabled_img, anchor="nw")
+            image=self.disabled_img, anchor="nw", tags="drag_movable_wall")
 
         if not self.is_disabled:
             self.movable_wall = self.canvas.create_image(
                 tp_x0 + 50, tp_y0 - 10,
-                image=self.active_img, anchor="nw")
+                image=self.active_img, anchor="nw", tags="drag_movable_wall")
 
         return {
             "item": self.movable_wall,
@@ -78,7 +76,9 @@ class MovableWall:
         self.is_active = True
 
         wall_item = self.wall_object["item"]
-        w_x0, w_y0, w_x1, w_y1 = self.canvas.coords(wall_item)
+        w_x0, w_y0 = self.canvas.coords(wall_item)
+        w_x1 = w_x0 + self.image_width
+        w_y1 = w_y0 + self.image_height
 
         # do not move wall if it's on start position
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
@@ -98,7 +98,7 @@ class MovableWall:
         wall_center_distance = (w_x1 - w_x0) / 2
         w_x0 += wall_center_distance
 
-        if abs(w_y1 - cl_y0) < 20 and w_x0 <= cl_x0 <= w_x1:
+        if abs(w_y0 - cl_y0) < 5 and w_x0 <= cl_x0 <= w_x1:
             closest_letter.destroy()
             self.wall_object["hp"] -= 1
 

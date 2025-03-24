@@ -10,12 +10,10 @@ class Damage:
         self.is_damaged = False
 
         if Damage._image is None:
-            Damage._image = ImageTk.PhotoImage(
-                Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/damage.png") # TODO replace with relative path
-            )
+            Damage._image = ImageTk.PhotoImage(Image.open("assets/effects/damage.png"))
 
-    def show(self, x, y, is_disappear = False):
-        image_id = self.canvas.create_image(x, y, image=Damage._image)
+    def show(self, x, y):
+        return self.canvas.create_image(x, y, image=Damage._image)
 
-        if is_disappear:
-            self.canvas.after(0, lambda: self.canvas.delete(image_id))
+    def hide(self, image_id):
+        self.canvas.after(0, lambda: self.canvas.delete(image_id))

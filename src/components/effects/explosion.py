@@ -11,7 +11,7 @@ class Explosion:
 
         if Explosion._explosion_image is None:
             Explosion._explosion_image = ImageTk.PhotoImage(
-                Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/explosion.png") # TODO replace with relative path
+                Image.open("assets/effects/explosion.png")
             )
 
     def show(self, x, y, disappear_after_ms = 600):

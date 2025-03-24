@@ -7,10 +7,7 @@ class Wall:
         self.screen_width = screen_width
         self.screen_height = screen_height
 
-        self.image = ImageTk.PhotoImage(
-            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/wall_cell.png")
-            # TODO replace with relative path
-        )
+        self.image = ImageTk.PhotoImage(Image.open("assets/wall_cell.png"))
 
         state = State()
         state.append_range("wall_cells", self.create_wall())

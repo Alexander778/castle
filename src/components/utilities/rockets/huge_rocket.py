@@ -1,4 +1,6 @@
 import random
+
+from src.components.effects.explosion import Explosion
 from src.states.state import State
 from PIL import Image, ImageTk
 
@@ -8,10 +10,7 @@ class HugeRocket:
         self.screen_width = screen_width
         self.screen_height = screen_height
 
-        self.huge_rocket_image = ImageTk.PhotoImage(
-            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/huge_rocket.png")
-            # TODO replace with relative path
-        )
+        self.huge_rocket_image = ImageTk.PhotoImage(Image.open("assets/huge_rocket.png"))
         self.huge_rocket_image_width = self.huge_rocket_image.width()
         self.huge_rocket_image_height = self.huge_rocket_image.height()
 
@@ -40,6 +39,9 @@ class HugeRocket:
             self.__check_wall_for_damage()
 
     def destroy(self):
+        rocket_coordinates = self.canvas.coords(self.rocket)
+        Explosion(self.canvas).show(rocket_coordinates[0], rocket_coordinates[1], 500)
+
         self.canvas.delete(self.rocket)
         State().remove("huge_rocket", self)
         self.rocket = None
@@ -62,7 +64,7 @@ class HugeRocket:
 
         for radar in potentially_damaged_radars:
             radar_item = radar.radar["item"]
-            radar_x0, radar_y0, radar_x1, _ = self.canvas.coords(radar_item)
+            radar_x0, radar_y0 = self.canvas.coords(radar_item)
 
             if abs(rocket_y1 - radar_y0) < 15:
                 radar.destroy()
@@ -78,14 +80,14 @@ class HugeRocket:
 
         potentially_damaged_air_defenses = [
             air_defense for air_defense in State().get_data("air_defense")
-            if len(self.canvas.coords(air_defense.device["item"])) != 0
-            and self.canvas.coords(air_defense.device["item"])[0] <= rocket_x0 <=
-               self.canvas.coords(air_defense.device["item"])[2]
+            if len(self.canvas.coords(air_defense.device["rocket"])) != 0
+            and self.canvas.coords(air_defense.device["rocket"])[0] <= rocket_x0 <=
+               self.canvas.coords(air_defense.device["rocket"])[0] + self.huge_rocket_image_width
             and air_defense.device["hp"] != 0
         ]
 
         for air_defense in potentially_damaged_air_defenses:
-            air_x0, air_y0, _, _ = self.canvas.coords(air_defense.device["item"])
+            air_x0, air_y0 = self.canvas.coords(air_defense.device["rocket"])
 
             if abs(rocket_y1 - air_y0) < 15:
                 air_defense.destroy()
@@ -108,7 +110,10 @@ class HugeRocket:
             cell_x0, cell_y0 = self.canvas.coords(cell)
             rocket_x0, rocket_y0 = self.canvas.coords(self.rocket)
 
-            if abs(rocket_x0 - cell_x0) < 15 and abs(rocket_y0 - cell_y0) < 15:
+            rocket_x1 = rocket_x0 + self.huge_rocket_image_width
+            rocket_y1 = rocket_y0 + self.huge_rocket_image_height
+
+            if abs(rocket_x1 - cell_x0) <= 40 and abs(rocket_y1 - cell_y0) < 15:
                 column_tag = self.canvas.gettags(cell)[1]
 
                 cells_are_destroyed = 0

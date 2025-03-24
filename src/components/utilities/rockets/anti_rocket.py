@@ -19,20 +19,9 @@ class AntiRocket:
         self.key_start_x0 = 0
         self.key_start_y0 = 0
 
-        self.disabled_img = ImageTk.PhotoImage(
-            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/anti_rocket/anti_rocket_disabled.png")
-            # TODO replace with relative path
-        )
-
-        self.inactive_img = ImageTk.PhotoImage(
-            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/anti_rocket/anti_rocket_inactive.png")
-            # TODO replace with relative path
-        )
-
-        self.active_img = ImageTk.PhotoImage(
-            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/anti_rocket/anti_rocket_active.png")
-            # TODO replace with relative path
-        )
+        self.disabled_img = ImageTk.PhotoImage(Image.open("assets/anti_rocket/anti_rocket_disabled.png"))
+        self.inactive_img = ImageTk.PhotoImage(Image.open("assets/anti_rocket/anti_rocket_inactive.png"))
+        self.active_img = ImageTk.PhotoImage(Image.open("assets/anti_rocket/anti_rocket_active.png"))
 
         self.anti_rocket = self.create()
 

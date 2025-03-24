@@ -1,6 +1,7 @@
 from src.components.effects.damage import Damage
 from src.components.effects.explosion import Explosion
 from PIL import Image, ImageTk
+import math
 
 class AirDefenseDevice:
     def __init__(self, canvas, coordinates, colors, position):
@@ -10,20 +11,18 @@ class AirDefenseDevice:
         self.colors = colors
         self.position = position
 
-        self.inactive_rocket_img = ImageTk.PhotoImage(
-            Image.open(f"C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/air-defense-rocket-{position}-inactive.png")
-            # TODO replace with relative path
-        )
+        self.rocket_pil_object = Image.open(f"assets/air_defense/air-defense-rocket-{position}-active.png")
+        self.rocket_img = ImageTk.PhotoImage(self.rocket_pil_object)
 
         self.device = self.create_device()
 
     def create_device(self):
         rocket = self.canvas.create_image(self.coordinates[0], self.coordinates[1],
-                                          image=self.inactive_rocket_img, anchor="nw")
+                                          image=self.rocket_img, anchor="nw")
         self.canvas.lower(rocket)
         return {
             "rocket": rocket,
-            "rocket_img": self.inactive_rocket_img,
+            "rocket_img": self.rocket_img,
             "hp": 2
         }
 
@@ -34,23 +33,35 @@ class AirDefenseDevice:
 
         if letter_exists is False:
             self.canvas.delete(rocket)
-
-        letter_x0, letter_y0 = self.canvas.coords(letter)
-        rocket_x0, rocket_y0, _, _ = self.canvas.coords(rocket)
-
-        if abs(rocket_x0 - letter_x0) < 10 and abs(rocket_y0 - letter_y0) < 10:
-            self.canvas.delete(rocket)
-            self.canvas.delete(letter)
             return
 
-        if rocket_y0 < 10:
-            self.canvas.delete(rocket)
-        else:
-            step_x = 10 if rocket_x0 < letter_x0 else -10
-            step_y = -10 if rocket_y0 > letter_y0 else 10
+        letter_x0, letter_y0 = self.canvas.coords(letter)
+        rocket_x0, rocket_y0 = self.canvas.coords(rocket)
 
-            self.canvas.move(rocket, step_x, step_y)
-            self.canvas.after(100, self.move_rocket, letter)
+        if abs(rocket_x0 - letter_x0) < 5 and abs(rocket_y0 - letter_y0) < 5:
+            self.canvas.delete(rocket)
+            self.canvas.delete(letter)
+            Explosion(self.canvas).show(rocket_x0, rocket_y0)
+            return
+
+        # Calculate angle (in radians) to target
+        angle = math.degrees(math.atan2(letter_y0 - rocket_y0, letter_x0 - rocket_x0)) - 90
+
+        # Compute smooth movement steps
+        distance = math.hypot(letter_x0 - rocket_x0, letter_y0 - rocket_y0)
+        step_size = min(10, int(distance / 5))
+
+        step_x = step_size * math.cos(math.radians(angle + 90))
+        step_y = step_size * math.sin(math.radians(angle + 90))
+
+        self.canvas.move(rocket, step_x, step_y)
+
+        rotated_image = self.rocket_pil_object.rotate(angle, expand=True)
+        self.rocket_img = ImageTk.PhotoImage(rotated_image)
+
+        self.canvas.itemconfig(rocket, image=self.rocket_img)
+
+        self.canvas.after(30, self.move_rocket, letter)
 
     def heal(self):
         if self.device["hp"] == 1:
@@ -58,11 +69,9 @@ class AirDefenseDevice:
             # self.canvas.itemconfig(self.device["item"], fill="white")
 
     def hit(self):
-        launch_pad_coordinates = self.canvas.coords(self.device["launch_pad"])
+        rocket_coordinates = self.canvas.coords(self.device["rocket"])
 
-        Explosion(self.canvas).show(launch_pad_coordinates[0], launch_pad_coordinates[1])
-        Damage(self.canvas).show(launch_pad_coordinates[0], launch_pad_coordinates[1])
+        Explosion(self.canvas).show(rocket_coordinates[0], rocket_coordinates[1])
 
     def destroy(self):
-        self.canvas.delete(self.device["item"])
         self.canvas.delete(self.device["rocket"])

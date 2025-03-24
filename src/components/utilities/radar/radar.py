@@ -9,11 +9,9 @@ class Radar:
         self.screen_height = screen_height
         self.radar_number = radar_number
 
-        self.image = ImageTk.PhotoImage(
-            Image.open("C:/Users/Oleksandr-O.Kuzmenko/PycharmProjects/castle/assets/radar.png")
-            # TODO replace with relative path
-        )
+        self.image = ImageTk.PhotoImage(Image.open("assets/radar.png"))
         self.radar = self.create()
+        self.damage_image_id = None
 
     def create(self):
         radar_action_range = self.screen_width / 4
@@ -45,14 +43,15 @@ class Radar:
     def heal(self):
         if self.radar["hp"] == 1:
             self.radar["hp"] += 1
-            # self.canvas.itemconfig(self.radar["item"], fill="lightgreen")
+            Damage(self.canvas).hide(self.damage_image_id)
 
     def hit(self):
         radar_coordinates = self.canvas.coords(self.radar["item"])
 
         Explosion(self.canvas).show(radar_coordinates[0], radar_coordinates[1])
-        Damage(self.canvas).show(radar_coordinates[0], radar_coordinates[1])
+        self.damage_image_id = Damage(self.canvas).show(radar_coordinates[0], radar_coordinates[1])
 
     def destroy(self):
+        Damage(self.canvas).hide(self.damage_image_id)
         self.canvas.delete(self.radar["item"])
 

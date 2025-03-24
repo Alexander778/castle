@@ -117,15 +117,15 @@ class FallingLetter:
         falling_letter_x0, falling_letter_y0 = self.letter_coordinates
         potentially_damaged_cells = [
             cell for cell in State().get_data("wall_cells")
-            if abs(self.canvas.coords(cell)[0] - falling_letter_x0) <= 5
+            if abs(falling_letter_x0 - self.canvas.coords(cell)[0]) <= 15
                and "hidden" not in self.canvas.itemcget(cell, "state")
         ]
 
         for cell in potentially_damaged_cells:
             cell_x0, cell_y0 = self.canvas.coords(cell)
 
-            if abs(falling_letter_y0 - cell_y0) < 15:
+            if abs(falling_letter_y0 - cell_y0) <= 15:
                 self.canvas.itemconfig(cell, state="hidden")
-                Explosion(self.canvas).show(cell_x0, cell_y0)
+                Explosion(self.canvas).show(falling_letter_x0, falling_letter_y0 + 15)
                 self.destroy()
                 return
