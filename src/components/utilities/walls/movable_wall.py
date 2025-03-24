@@ -31,12 +31,12 @@ class MovableWall:
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
         self.movable_wall = self.canvas.create_image(
-            tp_x0 + 50, tp_y0 - 10,
+            tp_x0 + 50, tp_y0 + 2,
             image=self.disabled_img, anchor="nw", tags="drag_movable_wall")
 
         if not self.is_disabled:
             self.movable_wall = self.canvas.create_image(
-                tp_x0 + 50, tp_y0 - 10,
+                tp_x0 + 50, tp_y0 + 2,
                 image=self.active_img, anchor="nw", tags="drag_movable_wall")
 
         return {

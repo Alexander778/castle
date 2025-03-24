@@ -23,13 +23,16 @@ class AntiRocket:
         self.inactive_img = ImageTk.PhotoImage(Image.open("assets/anti_rocket/anti_rocket_inactive.png"))
         self.active_img = ImageTk.PhotoImage(Image.open("assets/anti_rocket/anti_rocket_active.png"))
 
+        self.img_width = self.disabled_img.width()
+        self.img_height  = self.disabled_img.height()
+
         self.anti_rocket = self.create()
 
     def create(self):
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
         anti_rocket = self.canvas.create_image(
-            tp_x0 + 250, tp_y0,
+            tp_x0 + 160, tp_y0 + 5,
             image=self.disabled_img, anchor="nw",
             tags="draggable_rocket")
 
@@ -65,14 +68,13 @@ class AntiRocket:
 
         platform_center_y = (y1 + y2) / 2
 
-        ax1, _, ax2, _ = self.canvas.coords(self.anti_rocket)
+        ax1, _ = self.canvas.coords(self.anti_rocket)
+        ax2 = ax1 + self.img_width
 
         self.canvas.coords(
             self.anti_rocket,
             ax1,
-            platform_center_y - 7.5,
-            ax2,
-            platform_center_y + 7.5
+            platform_center_y - 7.5
         )
         self.point_sensor.decrease(anti_rocket_cost)
         self.recalculate()
@@ -83,7 +85,7 @@ class AntiRocket:
     def move(self):
         if self.anti_rocket is None:
             return
-        _, rocket_y0, _, _ = self.canvas.coords(self.anti_rocket)
+        _, rocket_y0 = self.canvas.coords(self.anti_rocket)
 
         if rocket_y0 < 5:
             self.destroy()
@@ -108,18 +110,18 @@ class AntiRocket:
         if not self.anti_rocket:
             return
 
-        a_rocket_x0, a_rocket_y0, a_rocket_x1, a_rocket_y1 = self.canvas.coords(self.anti_rocket)
+        a_rocket_x0, a_rocket_y0 = self.canvas.coords(self.anti_rocket)
+
         potentially_damaged_huge_rockets = [
             h_rocket for h_rocket in State().get_data("huge_rocket")
             if len(self.canvas.coords(h_rocket.rocket)) != 0
-            and self.canvas.coords(h_rocket.rocket)[0] >= a_rocket_x0 and
-               self.canvas.coords(h_rocket.rocket)[2] <= a_rocket_x1
         ]
 
         for huge_rocket in potentially_damaged_huge_rockets:
-            h_rocket_x0, h_rocket_y0, _, h_rocket_y1 = self.canvas.coords(huge_rocket.rocket)
+            h_rocket_x0, h_rocket_y0 = self.canvas.coords(huge_rocket.rocket)
+            h_rocket_y1 = h_rocket_y0 + 34 # TODO huge_rocket width replace 34
 
-            if abs(a_rocket_y0 - h_rocket_y1) < 10:
+            if abs(a_rocket_y0 - h_rocket_y1) < 3:
                 self.destroy()
                 huge_rocket.destroy()
                 return
@@ -128,6 +130,4 @@ class AntiRocket:
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
         self.recalculate()
-        self.canvas.coords(self.anti_rocket,
-                           tp_x0 + 160, tp_y0 + 5,
-                           tp_x0 + 180, tp_y0 + 20)
+        self.canvas.coords(self.anti_rocket, tp_x0 + 160, tp_y0 + 5)

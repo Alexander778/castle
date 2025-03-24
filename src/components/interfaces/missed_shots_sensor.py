@@ -1,3 +1,5 @@
+from PIL import Image, ImageTk
+
 class MissedShotsSensor:
     _instance = None
 
@@ -12,12 +14,16 @@ class MissedShotsSensor:
             self.screen_width = screen_width
             self.screen_height = screen_height
 
+            self.target_image = ImageTk.PhotoImage(Image.open("assets/target_sensor.png"))
+
             self.counter = 5
             self.sensor = self.create()
             self.initialized = True
 
+
     def create(self):
-        return self.canvas.create_text(150, self.screen_height - 60,
+        self.canvas.create_image(150, self.screen_height - 75, image=self.target_image, anchor="nw")
+        return self.canvas.create_text(205, self.screen_height - 50,
                                        text=str(self.counter),
                                        font=("Arial", 20, "bold"))
 

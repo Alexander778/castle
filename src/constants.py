@@ -4,8 +4,8 @@ big_letter_color = "#FF0000"
 
 letter_cost = 5
 
-repairing_key_wall_cost = 0 # 7
-repairing_key_radar_cost = 0 # 20
-repairing_key_air_defense_cost = 0 # 25
+medicine_pack_wall_cost = 1 # 7
+medicine_pack_radar_cost = 1 # 20
+medicine_pack_air_defense_cost = 1 # 25
 movable_wall_cost = 1 # 50
-anti_rocket_cost = 0 # 100
+anti_rocket_cost = 1 # 100

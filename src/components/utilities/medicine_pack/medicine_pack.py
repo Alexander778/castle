@@ -1,5 +1,5 @@
 from src.components.interfaces.points_sensor import PointsSensor
-from src.constants import repairing_key_radar_cost, repairing_key_wall_cost, repairing_key_air_defense_cost
+from src.constants import medicine_pack_radar_cost, medicine_pack_wall_cost, medicine_pack_air_defense_cost
 from src.states.state import State
 from PIL import Image, ImageTk
 
@@ -30,7 +30,7 @@ class MedicinePack:
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
         key = self.canvas.create_image(
-            tp_x0 + 10, tp_y0 + 5,
+            tp_x0 + 10, tp_y0 + 10,
             image=self.disabled_img, anchor="nw", tags="drag_repair_key")
 
         if not self.is_disabled:
@@ -72,7 +72,7 @@ class MedicinePack:
         self.__reset()
 
     def recalculate(self):
-        self.is_disabled = self.point_sensor.counter < repairing_key_wall_cost
+        self.is_disabled = self.point_sensor.counter < medicine_pack_wall_cost
         if not self.is_disabled:
             self.canvas.itemconfig(self.medicine_pack, image=self.active_img)
         else:
@@ -90,9 +90,9 @@ class MedicinePack:
             cy2 = cy1 + 15
 
             if x1 < cx2 and x2 > cx1 and y1 < cy2 and y2 > cy1:
-                if self.point_sensor.counter >= repairing_key_wall_cost:
+                if self.point_sensor.counter >= medicine_pack_wall_cost:
                     self.canvas.itemconfig(cell, state="normal")
-                    self.point_sensor.decrease(repairing_key_wall_cost)
+                    self.point_sensor.decrease(medicine_pack_wall_cost)
                     self.recalculate()
                 self.__reset()
                 return
@@ -111,8 +111,8 @@ class MedicinePack:
             ry2 = ry1 + radar_object["image"].height()
 
             if x1 >= rx1 and x2 <= rx2 and y1 >= ry1 and y2 <= ry2:
-                if self.point_sensor.counter >= repairing_key_radar_cost:
-                    self.point_sensor.decrease(repairing_key_radar_cost)
+                if self.point_sensor.counter >= medicine_pack_radar_cost:
+                    self.point_sensor.decrease(medicine_pack_radar_cost)
                     self.recalculate()
                     radar.heal()
 
@@ -133,9 +133,9 @@ class MedicinePack:
             dx1, dy1, dx2, dy2 = self.canvas.coords(device_object["rocket"])
 
             if x1 >= dx1 and x2 <= dx2 and y1 >= dy1 and y2 <= dy2:
-                if self.point_sensor.counter >= repairing_key_air_defense_cost:
+                if self.point_sensor.counter >= medicine_pack_air_defense_cost:
                     air_device.heal()
-                    self.point_sensor.decrease(repairing_key_air_defense_cost)
+                    self.point_sensor.decrease(medicine_pack_air_defense_cost)
                     self.recalculate()
 
                 self.__reset()

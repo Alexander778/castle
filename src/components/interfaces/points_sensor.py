@@ -1,5 +1,5 @@
 from src.constants import letter_cost
-
+from PIL import Image, ImageTk
 
 class PointsSensor:
     _instance = None
@@ -15,6 +15,8 @@ class PointsSensor:
             self.screen_width = screen_width
             self.screen_height = screen_height
 
+            self.coins_image = ImageTk.PhotoImage(Image.open("assets/coins.png"))
+
             self.counter = 0
             self.sensor = self.create()
             self.initialized = True
@@ -24,7 +26,8 @@ class PointsSensor:
             self.anti_rocket = None
 
     def create(self):
-        return self.canvas.create_text(50, self.screen_height - 60,
+        self.canvas.create_image(10, self.screen_height - 75, image=self.coins_image, anchor="nw")
+        return self.canvas.create_text(75, self.screen_height - 50,
                                        text=str(self.counter),
                                        fill="red",
                                        font=("Arial", 20, "bold"))

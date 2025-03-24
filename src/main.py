@@ -50,9 +50,9 @@ canvas.create_line(0, 50, screen_width - 10, 50, width=1)
 canvas.create_line(0, screen_height - 80, screen_width - 10, screen_height - 80, width=1)
 
 # Tool panel
-tool_panel = canvas.create_rectangle(screen_width / 2 - 100, screen_height - 60,
-                                     screen_width / 2 + 300, screen_height - 35,
-                                     fill="lightgreen")
+tool_panel = canvas.create_rectangle(250, screen_height - 75,
+                                     500, screen_height - 30,
+                                     fill="lightgray")
 # Healing
 medicine_pack = MedicinePack(canvas, screen_width, screen_height, tool_panel)
 
