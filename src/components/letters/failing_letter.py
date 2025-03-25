@@ -25,7 +25,8 @@ class FallingLetter:
 
         letter_item = self.canvas.create_text(self.tank_current_position_x0 + 50, 75,
                                        text=letter_symbol,
-                                       fill=letter_symbol_color)
+                                       fill=letter_symbol_color,
+                                       font=("Arial", 12, "bold"))
 
         air_defence_devices = State().get_data("air_defense")
 
@@ -90,24 +91,24 @@ class FallingLetter:
 
         potentially_damaged_air_defenses = [
             air_defense for air_defense in State().get_data("air_defense")
-            if len(self.canvas.coords(air_defense.device["rocket"])) != 0
-            and self.canvas.coords(air_defense.device["rocket"])[0] <= falling_letter_x0 <=
-                   self.canvas.coords(air_defense.device["rocket"])[0]
-               + air_defense.device["rocket_img"].width()
-            and air_defense.device["hp"] != 0
+            if len(self.canvas.coords(air_defense.rocket["rocket"])) != 0
+            and self.canvas.coords(air_defense.rocket["rocket"])[0] <= falling_letter_x0 <=
+                   self.canvas.coords(air_defense.rocket["rocket"])[0]
+               + air_defense.rocket["rocket_img"].width()
+            and air_defense.rocket["hp"] != 0
         ]
 
         for air_defense in potentially_damaged_air_defenses:
-            air_device = air_defense.device
-            air_x0, air_y0 = self.canvas.coords(air_device["rocket"])
+            air_rocket = air_defense.rocket
+            air_x0, air_y0 = self.canvas.coords(air_rocket["rocket"])
 
             if abs(falling_letter_y0 - air_y0) < 15:
-                air_device["hp"] -= 1
+                air_rocket["hp"] -= 1
 
-                if air_device["hp"] == 1:
+                if air_rocket["hp"] == 1:
                     air_defense.hit()
 
-                if air_device["hp"] == 0:
+                if air_rocket["hp"] == 0:
                     air_defense.destroy()
 
                 self.destroy()
