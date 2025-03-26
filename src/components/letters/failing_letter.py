@@ -143,9 +143,11 @@ class FallingLetter:
                 return
 
     def __launch_the_rocket(self, air_rocket, letter_item, color):
+        if air_rocket.rocket["has_target"] or self.target_letter_circle:
+            return
+
         air_rocket.move_rocket(self)
-        if air_rocket.rocket["has_target"]:
-            self.__target_letter(letter_item, color)
+        self.__target_letter(letter_item, color)
 
     def __target_letter(self, letter_item, color):
         if self.target_letter_circle is not None:
