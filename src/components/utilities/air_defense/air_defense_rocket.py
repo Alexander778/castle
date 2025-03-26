@@ -15,6 +15,7 @@ class AirDefenseRocket:
         self.rocket_img = ImageTk.PhotoImage(self.rocket_pil_object)
 
         self.target_letter = None
+        self.speed = 30
         self.rocket = self.create_rocket()
 
     def create_rocket(self):
@@ -50,7 +51,6 @@ class AirDefenseRocket:
         rocket_x0, rocket_y0 = self.canvas.coords(rocket)
 
         if abs(rocket_x0 - letter_x0) <= 10 and abs(rocket_y0 - letter_y0) <= 5:
-            BigExplosion(self.canvas).show(rocket_x0, rocket_y0, disappear_after_ms=1000)
             self.destroy()
             letter.destroy()
             return
@@ -78,7 +78,7 @@ class AirDefenseRocket:
 
         self.canvas.itemconfig(rocket, image=self.rocket_img)
 
-        self.canvas.after(30, self.move_rocket, letter)
+        self.canvas.after(self.speed, self.move_rocket, letter)
 
     def heal(self):
         if self.rocket["hp"] == 1:
@@ -86,9 +86,17 @@ class AirDefenseRocket:
             # self.canvas.itemconfig(self.device["item"], fill="white")
 
     def hit(self):
-        rocket_coordinates = self.canvas.coords(self.rocket["rocket"])
+        rocket = self.rocket["rocket"]
+        rocket_coordinates = self.canvas.coords(rocket)
 
         Explosion(self.canvas).show(rocket_coordinates[0], rocket_coordinates[1])
+        self.speed = 60
+        self.rocket_pil_object = Image.open(f"assets/air_defense/air-defense-rocket-{self.position}-damaged.png")
+        self.rocket_img = ImageTk.PhotoImage(self.rocket_pil_object)
+        self.canvas.itemconfig(rocket, image=self.rocket_img)
 
     def destroy(self):
+        rocket_x0, rocket_y0 = self.canvas.coords(self.rocket["rocket"])
+
+        BigExplosion(self.canvas).show(rocket_x0, rocket_y0, disappear_after_ms=1000)
         self.canvas.delete(self.rocket["rocket"])

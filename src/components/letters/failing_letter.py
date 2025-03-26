@@ -92,7 +92,7 @@ class FallingLetter:
                 if radar_object["hp"] == 0:
                     radar.destroy()
                 if radar_object["hp"] == 1:
-                    radar.hit()
+                    radar.hit(falling_letter_x0, falling_letter_y0)
 
                 self.destroy()
                 return

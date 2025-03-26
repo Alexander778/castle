@@ -45,10 +45,10 @@ class Radar:
             self.radar["hp"] += 1
             Damage(self.canvas).hide(self.damage_image_id)
 
-    def hit(self):
+    def hit(self, hit_place_x0, hit_place_y0):
         radar_coordinates = self.canvas.coords(self.radar["item"])
 
-        Explosion(self.canvas).show(radar_coordinates[0], radar_coordinates[1])
+        Explosion(self.canvas).show(hit_place_x0, hit_place_y0)
         self.damage_image_id = Damage(self.canvas).show(radar_coordinates[0], radar_coordinates[1])
 
     def destroy(self):
