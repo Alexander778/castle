@@ -29,14 +29,14 @@ class MedicinePack:
     def create(self):
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
-        key = self.canvas.create_image(
+        pack = self.canvas.create_image(
             tp_x0 + 10, tp_y0 + 10,
             image=self.disabled_img, anchor="nw", tags="drag_repair_key")
 
         if not self.is_disabled:
-            self.canvas.itemconfig(key, image=self.active_img)
+            self.canvas.itemconfig(pack, image=self.active_img)
 
-        return key
+        return pack
 
     def on_drag_start(self, event):
         if self.is_disabled:

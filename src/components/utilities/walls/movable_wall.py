@@ -1,4 +1,6 @@
+from src.components.effects.big_explosion import BigExplosion
 from src.components.effects.damage import Damage
+from src.components.effects.explosion import Explosion
 from src.components.interfaces.points_sensor import PointsSensor
 from src.constants import movable_wall_cost
 from src.states.state import State
@@ -98,12 +100,14 @@ class MovableWall:
         wall_center_distance = (w_x1 - w_x0) / 2
         w_x0 += wall_center_distance
 
-        if abs(w_y0 - cl_y0) < 5 and w_x0 <= cl_x0 <= w_x1:
+        if abs(w_y0 - cl_y0) <= 5 and w_x0 <= cl_x0 <= w_x1:
+            Explosion(self.canvas).show(cl_x0, cl_y0, disappear_after_ms=100)
             closest_letter.destroy()
             self.wall_object["hp"] -= 1
 
             if self.wall_object["hp"] == 0:
-                self.__reset_position_key()
+                BigExplosion(self.canvas).show(w_x0, w_y0, disappear_after_ms=800)
+                self.__reset()
                 return
 
         step_size = min(10, abs(w_x0 - cl_x0))
@@ -158,22 +162,19 @@ class MovableWall:
 
         # Falling speed of letter: 10 pixels per 500ms → 0.02 pixels/ms
         letter_to_reach_wall_line_time = letter_to_wall_by_y_distance / (10 / 500)
-        wall_to_reach_letter_line_time = wall_to_reach_letter_by_x_distance / (10 / wall_move_timeout)
+        wall_to_reach_letter_line_time = wall_to_reach_letter_by_x_distance / (10 / wall_move_timeout) + 1000
 
-        # Introduce a tolerance factor (e.g., 5% margin)
         if letter_to_reach_wall_line_time > wall_to_reach_letter_line_time:
             return closest_letter
         else:
             return None
 
-    def __reset_position_key(self):
+    def __reset(self):
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
         self.is_active = False
         self.wall_object["hp"] = 9
         self.recalculate()
-        self.canvas.coords(self.wall_object["item"],
-                           tp_x0 + 50, tp_y0 + 5,
-                           tp_x0 + 150, tp_y0 + 20)
+        self.canvas.coords(self.movable_wall, tp_x0 + 50, tp_y0 + 5)
 
 
