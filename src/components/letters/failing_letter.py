@@ -11,6 +11,7 @@ class FallingLetter:
         self.screen_height = screen_height
         self.tank_current_position_x0 = tank_current_position_x0
 
+        self.target_letter_circle = None
         self.letter_item = self.create()
         self.letter_coordinates = self.canvas.coords(self.letter_item)
 
@@ -30,10 +31,14 @@ class FallingLetter:
 
         air_defence_devices = State().get_data("air_defense")
 
-        self.canvas.tag_bind(letter_item, "<Button-1>",
-                             lambda event: air_defence_devices[1].move_rocket(self.letter_item))
-        self.canvas.tag_bind(letter_item, "<Button-3>",
-                             lambda event: air_defence_devices[0].move_rocket(self.letter_item))
+        if is_uppercase:
+            self.canvas.tag_bind(letter_item, "<Button-3>",
+                                 lambda event: self.__launch_the_rocket(air_defence_devices[0],
+                                                                        letter_item, letter_symbol_color))
+        else:
+            self.canvas.tag_bind(letter_item, "<Button-1>",
+                             lambda event: self.__launch_the_rocket(air_defence_devices[1],
+                                                                    letter_item, letter_symbol_color))
 
         return letter_item
 
@@ -49,6 +54,10 @@ class FallingLetter:
             self.destroy()
         else:
             self.canvas.move(self.letter_item, 0, 10)
+
+            if self.target_letter_circle is not None:
+                self.canvas.move(self.target_letter_circle, 0, 10)
+
             self.canvas.after(500, self.move)
 
             self.__check_radars_for_damage()
@@ -58,6 +67,8 @@ class FallingLetter:
     def destroy(self):
         State().remove("letters", self)
         self.canvas.delete(self.letter_item)
+        self.canvas.delete(self.target_letter_circle)
+        self.target_letter_circle = None
 
     def __check_radars_for_damage(self):
         falling_letter_x0, falling_letter_y0 = self.letter_coordinates
@@ -130,3 +141,28 @@ class FallingLetter:
                 Explosion(self.canvas).show(falling_letter_x0, falling_letter_y0 + 15)
                 self.destroy()
                 return
+
+    def __launch_the_rocket(self, air_rocket, letter_item, color):
+        air_rocket.move_rocket(self)
+        if air_rocket.rocket["has_target"]:
+            self.__target_letter(letter_item, color)
+
+    def __target_letter(self, letter_item, color):
+        if self.target_letter_circle is not None:
+            return
+
+        x1, y1, x2, y2 = self.canvas.bbox(letter_item)
+
+        padding = 5
+        width = (x2 - x1) + 2 * padding
+        height = (y2 - y1) + 2 * padding
+        diameter = max(width, height)
+
+        x_center = (x1 + x2) / 2
+        y_center = (y1 + y2) / 2
+        x1 = x_center - diameter / 2
+        y1 = y_center - diameter / 2
+        x2 = x_center + diameter / 2
+        y2 = y_center + diameter / 2
+
+        self.target_letter_circle = self.canvas.create_oval(x1, y1, x2, y2, outline=color, width=2)
