@@ -1,4 +1,6 @@
 from PIL import Image, ImageTk
+
+from src.components.effects.big_explosion import BigExplosion
 from src.components.interfaces.points_sensor import PointsSensor
 from src.constants import anti_rocket_cost
 from src.states.state import State
@@ -11,10 +13,11 @@ class AntiRocket:
         self.tool_panel = tool_panel
         self.rocket_platform = rocket_platform
 
-        self.is_disabled = True
-
         self.point_sensor = PointsSensor(canvas, screen_width, screen_height)
         self.point_sensor.anti_rocket = self
+
+        self.is_disabled = self.point_sensor.counter < anti_rocket_cost
+        self.is_active = False
 
         self.key_start_x0 = 0
         self.key_start_y0 = 0
@@ -34,7 +37,7 @@ class AntiRocket:
         anti_rocket = self.canvas.create_image(
             tp_x0 + 160, tp_y0 + 5,
             image=self.disabled_img, anchor="nw",
-            tags="draggable_rocket")
+            tags="drag_anti_rocket")
 
         if not self.is_disabled:
             self.canvas.itemconfig(anti_rocket, image=self.inactive_img)
@@ -47,6 +50,9 @@ class AntiRocket:
 
         self.key_start_x0 = event.x
         self.key_start_y0 = event.y
+
+        self.point_sensor.decrease(anti_rocket_cost)
+        self.recalculate()
 
     def on_drag_move(self, event):
         if self.is_disabled:
@@ -69,21 +75,19 @@ class AntiRocket:
         platform_center_y = (y1 + y2) / 2
 
         ax1, _ = self.canvas.coords(self.anti_rocket)
-        ax2 = ax1 + self.img_width
 
         self.canvas.coords(
             self.anti_rocket,
             ax1,
             platform_center_y - 7.5
         )
-        self.point_sensor.decrease(anti_rocket_cost)
-        self.recalculate()
 
     def launch_rocket(self, event):
+        self.is_active = True
         self.move()
 
     def move(self):
-        if self.anti_rocket is None:
+        if self.anti_rocket is None or self.is_active is True:
             return
         _, rocket_y0 = self.canvas.coords(self.anti_rocket)
 
@@ -96,7 +100,11 @@ class AntiRocket:
             # TODO check if user hit the tank
             self.__check_huge_rockets_for_damage()
 
-    def destroy(self):
+    def destroy(self, with_explosion = True):
+        rocket_x0, rocket_y0 = self.canvas.coords(self.anti_rocket)
+
+        if with_explosion:
+            BigExplosion(self.canvas).show(rocket_x0, rocket_y0)
         self.__reset_position()
 
     def recalculate(self):
@@ -121,13 +129,14 @@ class AntiRocket:
             h_rocket_x0, h_rocket_y0 = self.canvas.coords(huge_rocket.rocket)
             h_rocket_y1 = h_rocket_y0 + 34 # TODO huge_rocket width replace 34
 
-            if abs(a_rocket_y0 - h_rocket_y1) < 3:
-                self.destroy()
+            if abs(a_rocket_y0 - h_rocket_y1) <= 8 and abs(a_rocket_x0 - h_rocket_x0) <= 8:
+                self.destroy(with_explosion=False)
                 huge_rocket.destroy()
                 return
 
     def __reset_position(self):
         tp_x0, tp_y0, _, _ = self.canvas.coords(self.tool_panel)
 
+        self.is_active = False
         self.recalculate()
         self.canvas.coords(self.anti_rocket, tp_x0 + 160, tp_y0 + 5)

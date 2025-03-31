@@ -97,9 +97,12 @@ class UserTank:
         self.canvas.itemconfig(self.sight, state="hidden")
 
     def __calculate_sight_length(self, tank_x0):
-        radars = State().get_data("radars")
+        in_radar_range = [
+            radar for radar in State().get_data("radars")
+            if radar.radar["action_range"][0] <= tank_x0 <= radar.radar["action_range"][1]
+        ]
 
-        for radar in radars:
+        for radar in in_radar_range:
             radar_object = radar.radar
             radar_range_start, radar_range_end = radar_object["action_range"]
 

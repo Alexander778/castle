@@ -17,7 +17,7 @@ class PointsSensor:
 
             self.coins_image = ImageTk.PhotoImage(Image.open("assets/coins.png"))
 
-            self.counter = 0
+            self.counter = 50
             self.sensor = self.create()
             self.initialized = True
 

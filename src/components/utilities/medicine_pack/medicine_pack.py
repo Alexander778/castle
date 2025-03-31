@@ -31,7 +31,7 @@ class MedicinePack:
 
         pack = self.canvas.create_image(
             tp_x0 + 10, tp_y0 + 10,
-            image=self.disabled_img, anchor="nw", tags="drag_repair_key")
+            image=self.disabled_img, anchor="nw", tags="drag_medicine_pack")
 
         if not self.is_disabled:
             self.canvas.itemconfig(pack, image=self.active_img)
@@ -123,12 +123,12 @@ class MedicinePack:
     def __heal_air_defense(self, x1, y1, x2, y2):
         air_defense_for_healing = [
             air_device for air_device in State().get_data("air_defense")
-            if len(self.canvas.coords(air_device.device["rocket"])) != 0
-               and air_device.device["hp"] == 1
+            if len(self.canvas.coords(air_device.rocket["rocket"])) != 0
+               and air_device.rocket["hp"] == 1
         ]
 
         for air_device in air_defense_for_healing:
-            device_object = air_device.device
+            device_object = air_device.rocket
 
             dx1, dy1, dx2, dy2 = self.canvas.coords(device_object["rocket"])
 
