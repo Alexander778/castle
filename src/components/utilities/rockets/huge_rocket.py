@@ -10,7 +10,7 @@ class HugeRocket:
         self.screen_width = screen_width
         self.screen_height = screen_height
 
-        self.huge_rocket_image = ImageTk.PhotoImage(Image.open("assets/huge_rocket.png"))
+        self.huge_rocket_image = ImageTk.PhotoImage(Image.open("../assets/huge_rocket.png"))
         self.image_width = self.huge_rocket_image.width()
         self.image_height = self.huge_rocket_image.height()
 

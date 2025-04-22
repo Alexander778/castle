@@ -14,7 +14,7 @@ class UserTank:
         self.new_position_for_shot_x0 = 0
 
         self.image = ImageTk.PhotoImage(
-            Image.open("assets/tanks/user_tank.png"))
+            Image.open("../assets/tanks/user_tank.png"))
 
         self.tank = self.canvas.create_image(
             screen_width / 2,

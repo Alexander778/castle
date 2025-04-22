@@ -10,7 +10,7 @@ class Damage:
         self.is_damaged = False
 
         if Damage._image is None:
-            Damage._image = ImageTk.PhotoImage(Image.open("assets/effects/damage.png"))
+            Damage._image = ImageTk.PhotoImage(Image.open("../assets/effects/damage.png"))
 
     def show(self, x, y):
         return self.canvas.create_image(x, y, image=Damage._image)

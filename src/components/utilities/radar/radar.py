@@ -9,7 +9,7 @@ class Radar:
         self.screen_height = screen_height
         self.radar_number = radar_number
 
-        self.image = ImageTk.PhotoImage(Image.open("assets/radar.png"))
+        self.image = ImageTk.PhotoImage(Image.open("../assets/radar.png"))
         self.radar = self.create()
         self.damage_image_id = None
 

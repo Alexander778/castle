@@ -14,7 +14,7 @@ class MissedShotsSensor:
             self.screen_width = screen_width
             self.screen_height = screen_height
 
-            self.target_image = ImageTk.PhotoImage(Image.open("assets/target_sensor.png"))
+            self.target_image = ImageTk.PhotoImage(Image.open("../assets/target_sensor.png"))
 
             self.counter = 5
             self.sensor = self.create()

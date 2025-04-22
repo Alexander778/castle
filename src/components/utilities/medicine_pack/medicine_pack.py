@@ -14,8 +14,8 @@ class MedicinePack:
         self.point_sensor = PointsSensor(canvas, screen_width, screen_height)
         self.point_sensor.repairing_key = self
 
-        self.active_img = ImageTk.PhotoImage(Image.open("assets/medicine_pack/medicine_pack.png"))
-        self.disabled_img = ImageTk.PhotoImage(Image.open("assets/medicine_pack/medicine_pack_disabled.png"))
+        self.active_img = ImageTk.PhotoImage(Image.open("../assets/medicine_pack/medicine_pack.png"))
+        self.disabled_img = ImageTk.PhotoImage(Image.open("../assets/medicine_pack/medicine_pack_disabled.png"))
 
         self.img_width = self.active_img.width()
         self.img_height = self.active_img.height()

@@ -11,7 +11,7 @@ class AirDefenseRocket:
         self.colors = colors
         self.position = position
 
-        self.rocket_pil_object = Image.open(f"assets/air_defense/air-defense-rocket-{position}-active.png")
+        self.rocket_pil_object = Image.open(f"../assets/air_defense/air-defense-rocket-{position}-active.png")
         self.rocket_img = ImageTk.PhotoImage(self.rocket_pil_object)
 
         self.target_letter = None
@@ -91,7 +91,7 @@ class AirDefenseRocket:
 
         Explosion(self.canvas).show(rocket_coordinates[0], rocket_coordinates[1])
         self.speed = 60
-        self.rocket_pil_object = Image.open(f"assets/air_defense/air-defense-rocket-{self.position}-damaged.png")
+        self.rocket_pil_object = Image.open(f"../assets/air_defense/air-defense-rocket-{self.position}-damaged.png")
         self.rocket_img = ImageTk.PhotoImage(self.rocket_pil_object)
         self.canvas.itemconfig(rocket, image=self.rocket_img)
 

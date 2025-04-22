@@ -11,7 +11,7 @@ class Explosion:
 
         if Explosion._explosion_image is None:
             Explosion._explosion_image = ImageTk.PhotoImage(
-                Image.open("assets/effects/explosion.png")
+                Image.open("../assets/effects/explosion.png")
             )
 
     def show(self, x, y, disappear_after_ms = 600):

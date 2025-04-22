@@ -15,7 +15,7 @@ class PointsSensor:
             self.screen_width = screen_width
             self.screen_height = screen_height
 
-            self.coins_image = ImageTk.PhotoImage(Image.open("assets/coins.png"))
+            self.coins_image = ImageTk.PhotoImage(Image.open("../assets/coins.png"))
 
             self.counter = 50
             self.sensor = self.create()
@@ -26,7 +26,7 @@ class PointsSensor:
             self.anti_rocket = None
 
     def create(self):
-        self.canvas.create_image(10, self.screen_height - 75, image=self.coins_image, anchor="nw")
+        self.canvas.create_image(10, self.screen_height - 80, image=self.coins_image, anchor="nw")
         return self.canvas.create_text(75, self.screen_height - 50,
                                        text=str(self.counter),
                                        fill="red",

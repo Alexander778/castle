@@ -7,7 +7,6 @@ from src.components.tanks.computer_tank import ComputerTank
 from src.components.tanks.user_tank import UserTank
 from src.components.utilities.air_defense.air_defense import AirDefense
 from src.components.utilities.medicine_pack.medicine_pack import MedicinePack
-from src.components.utilities.rockets.anti_rocket import AntiRocket
 from src.components.utilities.walls.movable_wall import MovableWall
 from src.components.utilities.radar.radars import Radars
 from src.components.utilities.walls.wall import Wall
@@ -51,16 +50,13 @@ canvas.create_line(0, screen_height - 80, screen_width - 10, screen_height - 80,
 
 # Tool panel
 tool_panel = canvas.create_rectangle(250, screen_height - 75,
-                                     500, screen_height - 30,
+                                     400, screen_height - 30,
                                      fill="lightgray")
 # Healing
 medicine_pack = MedicinePack(canvas, screen_width, screen_height, tool_panel)
 
 # Movable wall
 movable_wall = MovableWall(canvas, screen_width, screen_height, tool_panel)
-
-# Anti-rocket
-anti_rocket = AntiRocket(canvas, screen_width, screen_height, tool_panel, rocket_platform)
 
 # Missed shots sensor
 sensor = MissedShotsSensor(canvas, screen_width, screen_height)
@@ -88,10 +84,5 @@ canvas.tag_bind(tagOrId="drag_medicine_pack", sequence="<ButtonRelease-1>", func
 canvas.tag_bind(tagOrId="drag_movable_wall", sequence="<ButtonPress-1>", func=movable_wall.on_drag_start)
 canvas.tag_bind(tagOrId="drag_movable_wall", sequence="<B1-Motion>", func=movable_wall.on_drag_move)
 canvas.tag_bind(tagOrId="drag_movable_wall", sequence="<ButtonRelease-1>", func=movable_wall.on_drag_release)
-
-canvas.tag_bind(tagOrId="drag_anti_rocket", sequence="<Double-Button-1>", func=anti_rocket.launch_rocket)
-canvas.tag_bind(tagOrId="drag_anti_rocket", sequence="<ButtonPress-1>", func=anti_rocket.on_drag_start)
-canvas.tag_bind(tagOrId="drag_anti_rocket", sequence="<B1-Motion>", func=anti_rocket.on_drag_move)
-canvas.tag_bind(tagOrId="drag_anti_rocket", sequence="<ButtonRelease-1>", func=anti_rocket.on_drag_release)
 
 root.mainloop()

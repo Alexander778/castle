@@ -12,7 +12,7 @@ class ComputerTank:
         self.new_position_for_shot_x0 = 0
         self.is_damaged = False
 
-        self.image = ImageTk.PhotoImage(Image.open("assets/tanks/computer_tank.png"))
+        self.image = ImageTk.PhotoImage(Image.open("../assets/tanks/computer_tank.png"))
 
         self.tank = self.canvas.create_image(0, 5, image=self.image, anchor="nw")
 

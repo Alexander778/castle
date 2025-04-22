@@ -19,8 +19,8 @@ class MovableWall:
         self.point_sensor = PointsSensor(canvas, screen_width, screen_height)
         self.point_sensor.movable_wall = self
 
-        self.active_img = ImageTk.PhotoImage(Image.open("assets/movable_wall/movable_wall.png"))
-        self.disabled_img = ImageTk.PhotoImage(Image.open("assets/movable_wall/movable_wall_disabled.png"))
+        self.active_img = ImageTk.PhotoImage(Image.open("../assets/movable_wall/movable_wall.png"))
+        self.disabled_img = ImageTk.PhotoImage(Image.open("../assets/movable_wall/movable_wall_disabled.png"))
 
         self.image_width = self.active_img.width()
         self.image_height = self.active_img.height()
