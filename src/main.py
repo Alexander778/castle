@@ -1,15 +1,6 @@
 from tkinter import *
-
-from src.components.effects.explosion import Explosion
-from src.components.interfaces.missed_shots_sensor import MissedShotsSensor
-from src.components.interfaces.points_sensor import PointsSensor
-from src.components.tanks.computer_tank import ComputerTank
-from src.components.tanks.user_tank import UserTank
-from src.components.utilities.air_defense.air_defense import AirDefense
-from src.components.utilities.medicine_pack.medicine_pack import MedicinePack
-from src.components.utilities.walls.movable_wall import MovableWall
-from src.components.utilities.radar.radars import Radars
-from src.components.utilities.walls.wall import Wall
+from src.pages.game_page import GamePage
+from src.pages.start_page import StartPage
 
 #root
 root = Tk()
@@ -17,72 +8,36 @@ root = Tk()
 # Screen
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
-root.state('zoomed')
+
+root.title("The Castle")
+root.geometry("800x600")
 root.resizable(False, False)
 
-#Canvas
-canvas = Canvas(root)
-canvas.config(width=screen_width, height=screen_height)
-canvas.grid(column=0, row=0)
+# Container for "pages"
+container = Frame(root)
+container.pack(fill="both", expand=True)
 
-# Explosion
-explosion = Explosion(canvas)
+# Page instances
+game_page = GamePage(container)
+start_page = StartPage(container, show_game_callback=lambda u, d: switch_to(game_page, u, d))
+def switch_to(page, username=None, difficulty=None):
+    start_page.pack_forget()
+    game_page.pack_forget()
 
-# Storages
-falling_letters = []
+    if isinstance(page, GamePage) and username and difficulty:
+        page.set_user_info(username, difficulty)
 
-# Radars
-radars = Radars(canvas, screen_width, screen_height)
+        root.state("normal")
+        page.start_game(root, screen_width, screen_height)
+        root.geometry(f"{screen_width}x{screen_height}")
+        root.resizable(True, True)
+    else:
+        root.state("zoomed")
+        root.resizable(False, False)
 
-# Wall
-wall = Wall(canvas, screen_width, screen_height)
+    page.pack(fill="both", expand=True)
 
-# Anti rocket platform
-rocket_platform = canvas.create_rectangle(5, screen_height - 165,
-                                     screen_width - 10, screen_height - 140,
-                                     fill="lightgray")
-# Air defence
-air_defense = AirDefense(canvas, screen_width, screen_height)
-
-# Divider lines
-canvas.create_line(0, 50, screen_width - 10, 50, width=1)
-canvas.create_line(0, screen_height - 80, screen_width - 10, screen_height - 80, width=1)
-
-# Tool panel
-tool_panel = canvas.create_rectangle(250, screen_height - 75,
-                                     400, screen_height - 30,
-                                     fill="lightgray")
-# Healing
-medicine_pack = MedicinePack(canvas, screen_width, screen_height, tool_panel)
-
-# Movable wall
-movable_wall = MovableWall(canvas, screen_width, screen_height, tool_panel)
-
-# Missed shots sensor
-sensor = MissedShotsSensor(canvas, screen_width, screen_height)
-
-# Points sensor
-point_sensor = PointsSensor(canvas, screen_width, screen_height)
-
-# Tanks
-computer_tank = ComputerTank(canvas, screen_width, screen_height)
-user_tank = UserTank(canvas, screen_width, screen_height)
-
-# Binders
-root.after(100, computer_tank.move_to_new_position(), None)
-
-root.bind("<Left>", user_tank.move_tank_left)
-root.bind("<Right>", user_tank.move_tank_right)
-root.bind("<Key>", user_tank.shot_letter)
-root.bind("<KeyPress-Up>", user_tank.show_sight)
-root.bind("<KeyRelease-Up>", user_tank.hide_sight)
-
-canvas.tag_bind(tagOrId="drag_medicine_pack", sequence="<ButtonPress-1>", func=medicine_pack.on_drag_start)
-canvas.tag_bind(tagOrId="drag_medicine_pack", sequence="<B1-Motion>", func=medicine_pack.on_drag_move)
-canvas.tag_bind(tagOrId="drag_medicine_pack", sequence="<ButtonRelease-1>", func=medicine_pack.on_drag_release)
-
-canvas.tag_bind(tagOrId="drag_movable_wall", sequence="<ButtonPress-1>", func=movable_wall.on_drag_start)
-canvas.tag_bind(tagOrId="drag_movable_wall", sequence="<B1-Motion>", func=movable_wall.on_drag_move)
-canvas.tag_bind(tagOrId="drag_movable_wall", sequence="<ButtonRelease-1>", func=movable_wall.on_drag_release)
+# Show start page by default
+start_page.pack(fill="both", expand=True)
 
 root.mainloop()
