@@ -1,5 +1,7 @@
-from src.constants import letter_cost
 from PIL import Image, ImageTk
+
+from src.states.state import State
+
 
 class PointsSensor:
     _instance = None
@@ -17,7 +19,9 @@ class PointsSensor:
 
             self.coins_image = ImageTk.PhotoImage(Image.open("../assets/coins.png"))
 
-            self.counter = 50
+            self.counter = 0
+            self.letter_cost = State().get_data("difficulty")["letter_cost"]
+
             self.sensor = self.create()
             self.initialized = True
 
@@ -39,7 +43,7 @@ class PointsSensor:
         self.__update_counter_display()
 
     def increase(self):
-        self.counter += letter_cost # user can get points only for hitting letter using tank
+        self.counter += self.letter_cost
 
         self.repairing_key.recalculate()
         self.movable_wall.recalculate()

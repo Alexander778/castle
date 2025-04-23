@@ -1,8 +1,6 @@
 from src.components.effects.big_explosion import BigExplosion
-from src.components.effects.damage import Damage
 from src.components.effects.explosion import Explosion
 from src.components.interfaces.points_sensor import PointsSensor
-from src.constants import movable_wall_cost
 from src.states.state import State
 from PIL import Image, ImageTk
 
@@ -24,6 +22,8 @@ class MovableWall:
 
         self.image_width = self.active_img.width()
         self.image_height = self.active_img.height()
+
+        self.movable_wall_cost = State().get_data("difficulty")["movable_wall_cost"]
 
         self.movable_wall = None
 
@@ -71,7 +71,7 @@ class MovableWall:
             return
 
         self.move_to_new_position()
-        self.point_sensor.decrease(movable_wall_cost)
+        self.point_sensor.decrease(self.movable_wall_cost)
         self.recalculate()
 
     def move_to_new_position(self):
@@ -121,7 +121,7 @@ class MovableWall:
     def recalculate(self):
         if self.is_active:
             return
-        self.is_disabled = self.point_sensor.counter < movable_wall_cost
+        self.is_disabled = self.point_sensor.counter < self.movable_wall_cost
         if not self.is_disabled:
             self.canvas.itemconfig(self.movable_wall, image=self.active_img)
         else:

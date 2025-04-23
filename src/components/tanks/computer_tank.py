@@ -14,6 +14,7 @@ class ComputerTank:
 
         self.image = ImageTk.PhotoImage(Image.open("../assets/tanks/computer_tank.png"))
 
+        self.speed = State().get_data("difficulty")["computer_tank_speed"]
         self.tank = self.canvas.create_image(0, 5, image=self.image, anchor="nw")
 
     def move_to_new_position(self):
@@ -31,7 +32,7 @@ class ComputerTank:
             self.canvas.move(self.tank, -10, 0)
             current_tank_position_x0 -= 10
 
-        self.canvas.after(100, self.move_to_new_position)
+        self.canvas.after(self.speed, self.move_to_new_position)
 
     def shot_letter(self):
         current_tank_position = self.canvas.coords(self.tank)

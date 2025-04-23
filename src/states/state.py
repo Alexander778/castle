@@ -1,4 +1,5 @@
 from src.states.implementations.air_defense_state import AirDefenseState
+from src.states.implementations.difficulty_state import DifficultyState
 from src.states.implementations.falling_letters_state import FallingLettersState
 from src.states.implementations.huge_rockets_state import HugeRocketsState
 from src.states.implementations.radars_state import RadarsState
@@ -11,6 +12,7 @@ class State:
         if cls._instance is None:
             cls._instance = super(State, cls).__new__(cls)
 
+            cls._instance.__difficulty_state = DifficultyState()
             cls._instance.__letters_state = FallingLettersState()
             cls._instance.__wall_cell_state = WallCellsState()
             cls._instance.__air_defense_state = AirDefenseState()
@@ -37,6 +39,7 @@ class State:
 
     def __get_instance(self, instance_type):
         instance_mapping = {
+            "difficulty": self._instance.__difficulty_state,
             "letters": self._instance.__letters_state,
             "wall_cells": self._instance.__wall_cell_state,
             "air_defense": self._instance.__air_defense_state,

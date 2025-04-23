@@ -1,5 +1,8 @@
 import tkinter as tk
 
+from src.states.state import State
+
+
 class StartPage(tk.Frame):
     def __init__(self, parent, show_game_callback):
         super().__init__(parent)
@@ -36,6 +39,8 @@ class StartPage(tk.Frame):
     def on_start(self):
         username = self.username_entry.get()
         difficulty = self.difficulty.get()
+
+        State().append("difficulty", difficulty.lower())
 
         if not username.strip():
             #tk.Message.showwarning("Input Required", "Please enter your name.")

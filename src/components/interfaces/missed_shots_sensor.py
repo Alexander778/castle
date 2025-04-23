@@ -1,4 +1,5 @@
 from PIL import Image, ImageTk
+from src.states.state import State
 
 class MissedShotsSensor:
     _instance = None
@@ -16,7 +17,7 @@ class MissedShotsSensor:
 
             self.target_image = ImageTk.PhotoImage(Image.open("../assets/target_sensor.png"))
 
-            self.counter = 5
+            self.counter = State().get_data("difficulty")["missing_letters_counter"]
             self.sensor = self.create()
             self.initialized = True
 
