@@ -13,6 +13,7 @@ from src.components.utilities.walls.wall import Wall
 class GamePage(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
+        self.wall = None
 
     def start_game(self, root, screen_width, screen_height):
         canvas = tk.Canvas(self, width=screen_width, height=screen_height)
@@ -20,7 +21,7 @@ class GamePage(tk.Frame):
 
         Explosion(canvas)
         Radars(canvas, screen_width, screen_height)
-        Wall(canvas, screen_width, screen_height)
+        self.wall = Wall(canvas, screen_width, screen_height)
 
         canvas.create_rectangle(5, screen_height - 165,
                                                   screen_width - 10, screen_height - 140,
