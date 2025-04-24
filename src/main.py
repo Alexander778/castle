@@ -25,16 +25,13 @@ def switch_to(page, username=None, difficulty=None):
     game_page.pack_forget()
 
     if isinstance(page, GamePage) and username and difficulty:
-        page.set_user_info(username, difficulty)
-
         root.state("normal")
-        page.start_game(root, screen_width, screen_height)
-        root.geometry(f"{screen_width}x{screen_height}")
+        page.start_game(root, screen_width, screen_height - 50)
+        root.geometry(f"{screen_width}x{screen_height - 50}")
         root.resizable(True, True)
     else:
         root.state("zoomed")
         root.resizable(False, False)
-
     page.pack(fill="both", expand=True)
 
 # Show start page by default

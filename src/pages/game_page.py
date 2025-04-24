@@ -14,22 +14,19 @@ class GamePage(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
 
-    def set_user_info(self, username, difficulty):
-        print(f"Hello {username}! Difficulty: {difficulty}")
-
     def start_game(self, root, screen_width, screen_height):
-        canvas = tk.Canvas(root, width=screen_width, height=screen_height)
-        canvas.pack()
+        canvas = tk.Canvas(self, width=screen_width, height=screen_height)
+        canvas.pack(fill="both", expand=True)
 
-        explosion = Explosion(canvas)
-        radars = Radars(canvas, screen_width, screen_height)
-        wall = Wall(canvas, screen_width, screen_height)
+        Explosion(canvas)
+        Radars(canvas, screen_width, screen_height)
+        Wall(canvas, screen_width, screen_height)
 
-        rocket_platform = canvas.create_rectangle(5, screen_height - 165,
+        canvas.create_rectangle(5, screen_height - 165,
                                                   screen_width - 10, screen_height - 140,
                                                   fill="lightgray")
 
-        air_defense = AirDefense(canvas, screen_width, screen_height)
+        AirDefense(canvas, screen_width, screen_height)
 
         canvas.create_line(0, 50, screen_width - 10, 50, width=1)
         canvas.create_line(0, screen_height - 80, screen_width - 10, screen_height - 80, width=1)
@@ -41,8 +38,8 @@ class GamePage(tk.Frame):
         medicine_pack = MedicinePack(canvas, screen_width, screen_height, tool_panel)
         movable_wall = MovableWall(canvas, screen_width, screen_height, tool_panel)
 
-        sensor = MissedShotsSensor(canvas, screen_width, screen_height)
-        point_sensor = PointsSensor(canvas, screen_width, screen_height)
+        MissedShotsSensor(canvas, screen_width, screen_height)
+        PointsSensor(canvas, screen_width, screen_height)
 
         computer_tank = ComputerTank(canvas, screen_width, screen_height)
         user_tank = UserTank(canvas, screen_width, screen_height)

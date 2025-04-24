@@ -47,7 +47,6 @@ class PointsSensor:
 
         self.repairing_key.recalculate()
         self.movable_wall.recalculate()
-        self.anti_rocket.recalculate()
 
         self.__update_counter_display()
 
