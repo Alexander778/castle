@@ -2,6 +2,7 @@ from src.states.implementations.air_defense_state import AirDefenseState
 from src.states.implementations.difficulty_state import DifficultyState
 from src.states.implementations.falling_letters_state import FallingLettersState
 from src.states.implementations.huge_rockets_state import HugeRocketsState
+from src.states.implementations.pause_state import PauseGameState
 from src.states.implementations.radars_state import RadarsState
 from src.states.implementations.wall_cells_state import WallCellsState
 
@@ -18,6 +19,7 @@ class State:
             cls._instance.__air_defense_state = AirDefenseState()
             cls._instance.__radars_state = RadarsState()
             cls._instance.__huge_rocket_state = HugeRocketsState()
+            cls._instance.__pause_game_state = PauseGameState()
 
         return cls._instance
     
@@ -44,7 +46,8 @@ class State:
             "wall_cells": self._instance.__wall_cell_state,
             "air_defense": self._instance.__air_defense_state,
             "radars": self._instance.__radars_state,
-            "huge_rocket": self._instance.__huge_rocket_state
+            "huge_rocket": self._instance.__huge_rocket_state,
+            "pause_game": self._instance.__pause_game_state
         }
 
         if instance_type in instance_mapping:

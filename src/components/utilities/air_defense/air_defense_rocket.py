@@ -2,6 +2,7 @@ from src.components.effects.big_explosion import BigExplosion
 from src.components.effects.explosion import Explosion
 from PIL import Image, ImageTk
 import math
+from src.states.state import State
 
 class AirDefenseRocket:
     def __init__(self, canvas, coordinates, colors, position):
@@ -30,6 +31,10 @@ class AirDefenseRocket:
         }
 
     def move_rocket(self, letter):
+        if State().get_data("pause_game"):
+            self.canvas.after(self.speed, self.move_rocket, letter)
+            return
+
         letter_item = letter.letter_item
         rocket = self.rocket["rocket"]
 

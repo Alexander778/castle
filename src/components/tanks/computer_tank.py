@@ -18,6 +18,10 @@ class ComputerTank:
         self.tank = self.canvas.create_image(0, 5, image=self.image, anchor="nw")
 
     def move_to_new_position(self):
+        if State().get_data("pause_game"):
+            self.canvas.after(self.speed, self.move_to_new_position)
+            return
+
         current_tank_position = self.canvas.coords(self.tank)
         current_tank_position_x0 = current_tank_position[0]
 

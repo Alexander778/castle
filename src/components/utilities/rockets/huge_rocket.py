@@ -24,6 +24,10 @@ class HugeRocket:
             image=self.huge_rocket_image, anchor="nw")
 
     def move(self):
+        if State().get_data("pause_game"):
+            self.canvas.after(100, self.move)
+            return
+
         if self.rocket is None or len(self.canvas.coords(self.rocket)) == 0:
             return
         _, rocket_y0 = self.canvas.coords(self.rocket)

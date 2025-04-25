@@ -43,14 +43,14 @@ class MedicinePack:
         return pack
 
     def on_drag_start(self, event):
-        if self.is_disabled:
+        if State().get_data("pause_game") or self.is_disabled:
             return
 
         self.key_start_x0 = event.x
         self.key_start_y0 = event.y
 
     def on_drag_move(self, event):
-        if self.is_disabled:
+        if State().get_data("pause_game") or self.is_disabled:
             return
 
         dx = event.x - self.key_start_x0
@@ -62,7 +62,7 @@ class MedicinePack:
         self.key_start_y0 = event.y
 
     def on_drag_release(self, _):
-        if self.is_disabled:
+        if State().get_data("pause_game") or self.is_disabled:
             return
 
         x1, y1 = self.canvas.coords(self.medicine_pack)

@@ -27,19 +27,28 @@ class UserTank:
             dash=(1, 1))
         self.canvas.itemconfig(self.sight, state="hidden")
 
-    def move_tank_left(self, event):
+    def move_tank_left(self, _):
+        if State().get_data("pause_game"):
+            return
+
         user_tank_x0 = self.canvas.coords(self.tank)[0]
 
         if user_tank_x0 > 0:
             self.canvas.move(self.tank, -10, 0)
 
     def move_tank_right(self, _):
+        if State().get_data("pause_game"):
+            return
+
         user_tank_x0 = self.canvas.coords(self.tank)[0]
 
         if user_tank_x0 < self.screen_width - 100:
             self.canvas.move(self.tank, 10, 0)
 
     def shot_letter(self, event):
+        if State().get_data("pause_game"):
+            return
+
         letter = event.char
         letter_symbol_color = "#0000FF"  # small letter color
 
@@ -56,6 +65,10 @@ class UserTank:
         self.move_letter(letter)
 
     def move_letter(self, fired_letter):
+        if State().get_data("pause_game"):
+            self.canvas.after(100, self.move_letter, fired_letter)
+            return
+
         fired_letter_x0, fired_letter_y0 = self.canvas.coords(fired_letter)
 
         filtered_array = list(filter(lambda f_letter:
@@ -80,6 +93,9 @@ class UserTank:
             self.canvas.after(100, self.move_letter, fired_letter)
 
     def show_sight(self, _):
+        if State().get_data("pause_game"):
+            return
+
         user_tank_x0, user_tank_y0 = self.canvas.coords(self.tank)
 
         line_length = self.__calculate_sight_length(user_tank_x0)
@@ -94,6 +110,9 @@ class UserTank:
         self.canvas.itemconfig(self.sight, state="normal")
 
     def hide_sight(self, _):
+        if State().get_data("pause_game"):
+            return
+
         self.canvas.itemconfig(self.sight, state="hidden")
 
     def __calculate_sight_length(self, tank_x0):

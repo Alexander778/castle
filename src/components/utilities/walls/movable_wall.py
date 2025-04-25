@@ -48,14 +48,14 @@ class MovableWall:
         }
 
     def on_drag_start(self, event):
-        if self.is_active or self.is_disabled:
+        if State().get_data("pause_game") or self.is_active or self.is_disabled:
             return
 
         self.key_start_x0 = event.x
         self.key_start_y0 = event.y
 
     def on_drag_move(self, event):
-        if self.is_active or self.is_disabled:
+        if State().get_data("pause_game") or self.is_active or self.is_disabled:
             return
 
         dx = event.x - self.key_start_x0
@@ -67,7 +67,7 @@ class MovableWall:
         self.key_start_y0 = event.y
 
     def on_drag_release(self, _):
-        if self.is_active or self.is_disabled:
+        if State().get_data("pause_game") or self.is_active or self.is_disabled:
             return
 
         self.move_to_new_position()
@@ -75,6 +75,10 @@ class MovableWall:
         self.recalculate()
 
     def move_to_new_position(self):
+        if State().get_data("pause_game"):
+            self.canvas.after(100, self.move_to_new_position)
+            return
+
         self.is_active = True
 
         wall_item = self.wall_object["item"]

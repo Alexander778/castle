@@ -43,6 +43,10 @@ class FallingLetter:
         return letter_item
 
     def move(self):
+        if State().get_data("pause_game"):
+            self.canvas.after(500, self.move)
+            return
+
         self.letter_coordinates = self.canvas.coords(self.letter_item)
 
         if len(self.letter_coordinates) == 0:
@@ -143,6 +147,9 @@ class FallingLetter:
                 return
 
     def __launch_the_rocket(self, air_rocket, letter_item, color):
+        if State().get_data("pause_game"):
+            return
+
         if air_rocket.rocket["has_target"] or self.target_letter_circle:
             return
 
