@@ -2,6 +2,8 @@ from src.components.effects.big_explosion import BigExplosion
 from src.components.effects.explosion import Explosion
 from PIL import Image, ImageTk
 import math
+
+from src.components.interfaces.points_sensor import PointsSensor
 from src.states.state import State
 
 class AirDefenseRocket:
@@ -17,13 +19,21 @@ class AirDefenseRocket:
 
         self.target_letter = None
         self.speed = 30
-        self.rocket = self.create_rocket()
+        self.rocket = None
+
+        self.point_sensor = PointsSensor.get_instance()
+
+        is_easy_level_selected = State().get_data("difficulty")["level"] == 0
+        if is_easy_level_selected:
+            self.create_rocket()
 
     def create_rocket(self):
+        enough_points_to_purchase = self.point_sensor.counter >= State().get_data("difficulty")["air_defence_rocket_cost"]
+
         rocket = self.canvas.create_image(self.coordinates[0], self.coordinates[1],
                                           image=self.rocket_img, anchor="nw")
         self.canvas.lower(rocket)
-        return {
+        self.rocket = {
             "rocket": rocket,
             "has_target": False,
             "rocket_img": self.rocket_img,
@@ -105,3 +115,16 @@ class AirDefenseRocket:
 
         BigExplosion(self.canvas).show(rocket_x0, rocket_y0, disappear_after_ms=1000)
         self.canvas.delete(self.rocket["rocket"])
+
+        self.rocket_img = ImageTk.PhotoImage(self.rocket_pil_object.rotate(0, expand=True))
+        self.rocket = None
+        self.target_letter = None
+
+    def setup_rocket(self):
+        rocket_cost = State().get_data("difficulty")["air_defence_rocket_cost"]
+        enough_points_to_purchase = self.point_sensor.counter >= rocket_cost
+        if self.rocket is not None or not enough_points_to_purchase:
+            return
+        else:
+            self.create_rocket()
+            self.point_sensor.decrease(rocket_cost)

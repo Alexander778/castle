@@ -82,7 +82,7 @@ class UserTank:
                 Explosion(self.canvas).show(fired_letter_x0, fired_letter_y0)
                 self.canvas.delete(fired_letter)
                 falling_letter.destroy()
-                PointsSensor(self.canvas, self.screen_width, self.screen_height).increase()
+                PointsSensor.get_instance().increase()
                 return
 
         if fired_letter_y0 < 50:

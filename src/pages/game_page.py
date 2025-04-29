@@ -22,19 +22,25 @@ class GamePage(tk.Frame):
         self.pause_button = None
         self.pause_overlay = None
 
+        self.air_defense_left_rocket_add_btn = None
+        self.air_defense_right_rocket_add_btn = None
+
     def start_game(self, root, screen_width, screen_height):
         self.canvas = tk.Canvas(self, width=screen_width, height=screen_height)
         self.canvas.pack(fill="both", expand=True)
+
+        MissedShotsSensor(self.canvas, screen_width, screen_height)
+        PointsSensor(self.canvas, screen_width, screen_height)
 
         Explosion(self.canvas)
         Radars(self.canvas, screen_width, screen_height)
         self.wall = Wall(self.canvas, screen_width, screen_height)
 
+        air_defense = AirDefense(self.canvas, screen_width, screen_height)
+
         self.canvas.create_rectangle(5, screen_height - 165,
                                                   screen_width - 10, screen_height - 140,
                                                   fill="lightgray")
-
-        AirDefense(self.canvas, screen_width, screen_height)
 
         self.canvas.create_line(0, 50, screen_width - 10, 50, width=1)
         self.canvas.create_line(0, screen_height - 80, screen_width - 10, screen_height - 80, width=1)
@@ -49,11 +55,18 @@ class GamePage(tk.Frame):
         medicine_pack = MedicinePack(self.canvas, screen_width, screen_height, tool_panel)
         movable_wall = MovableWall(self.canvas, screen_width, screen_height, tool_panel)
 
-        MissedShotsSensor(self.canvas, screen_width, screen_height)
-        PointsSensor(self.canvas, screen_width, screen_height)
-
         computer_tank = ComputerTank(self.canvas, screen_width, screen_height)
         user_tank = UserTank(self.canvas, screen_width, screen_height)
+
+        # Left button for adding air defense rocket
+        self.air_defense_left_rocket_add_btn = tk.Button(self, text="+", font=("Arial", 14, "bold"),
+                                                         command=air_defense.left_device.setup_rocket)
+        self.air_defense_left_rocket_add_btn.place(x=32, y=screen_height - 162, height=20, width=20)
+
+        # Right button for adding air defense rocket
+        self.air_defense_right_rocket_add_btn = tk.Button(self, text="+", font=("Arial", 14, "bold"),
+                                                          command=air_defense.right_device.setup_rocket)
+        self.air_defense_right_rocket_add_btn.place(x=screen_width - 65, y=screen_height - 162, height=20, width=20)
 
         root.after(100, computer_tank.move_to_new_position)
 

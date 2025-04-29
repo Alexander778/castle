@@ -87,7 +87,8 @@ class HugeRocket:
 
         potentially_damaged_air_defenses = [
             air_defense for air_defense in State().get_data("air_defense")
-            if len(self.canvas.coords(air_defense.rocket["rocket"])) != 0
+            if air_defense.rocket is not None
+               and len(self.canvas.coords(air_defense.rocket["rocket"])) != 0
             and self.canvas.coords(air_defense.rocket["rocket"])[0] <= rocket_x0 <=
                self.canvas.coords(air_defense.rocket["rocket"])[0] + self.image_width
             and air_defense.rocket["hp"] != 0

@@ -10,7 +10,7 @@ class MedicinePack:
         self.tool_panel = tool_panel
         self.is_disabled = True
 
-        self.point_sensor = PointsSensor(canvas, screen_width, screen_height)
+        self.point_sensor = PointsSensor.get_instance()
         self.point_sensor.repairing_key = self
 
         self.active_img = ImageTk.PhotoImage(Image.open("../assets/medicine_pack/medicine_pack.png"))

@@ -106,7 +106,8 @@ class FallingLetter:
 
         potentially_damaged_air_defenses = [
             air_defense for air_defense in State().get_data("air_defense")
-            if len(self.canvas.coords(air_defense.rocket["rocket"])) != 0
+            if air_defense.rocket is not None
+               and len(self.canvas.coords(air_defense.rocket["rocket"])) != 0
             and self.canvas.coords(air_defense.rocket["rocket"])[0] <= falling_letter_x0 <=
                    self.canvas.coords(air_defense.rocket["rocket"])[0]
                + air_defense.rocket["rocket_img"].width()
@@ -150,7 +151,7 @@ class FallingLetter:
         if State().get_data("pause_game"):
             return
 
-        if air_rocket.rocket["has_target"] or self.target_letter_circle:
+        if air_rocket.rocket is None or air_rocket.rocket["has_target"] or self.target_letter_circle:
             return
 
         air_rocket.move_rocket(self)
