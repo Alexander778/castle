@@ -28,8 +28,6 @@ class AirDefenseRocket:
             self.create_rocket()
 
     def create_rocket(self):
-        enough_points_to_purchase = self.point_sensor.counter >= State().get_data("difficulty")["air_defence_rocket_cost"]
-
         rocket = self.canvas.create_image(self.coordinates[0], self.coordinates[1],
                                           image=self.rocket_img, anchor="nw")
         self.canvas.lower(rocket)

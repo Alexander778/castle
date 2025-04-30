@@ -38,7 +38,7 @@ class PointsSensor:
             self.anti_rocket = None
 
     def create(self):
-        self._canvas.create_image(10, self._screen_width - 80, image=self.coins_image, anchor="nw")
+        self._canvas.create_image(10, self._screen_height - 80, image=self.coins_image, anchor="nw")
         return self._canvas.create_text(75, self._screen_height - 50,
                                        text=str(self.counter),
                                        fill="red",

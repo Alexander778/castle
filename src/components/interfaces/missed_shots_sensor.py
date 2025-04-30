@@ -17,7 +17,8 @@ class MissedShotsSensor:
 
             self.target_image = ImageTk.PhotoImage(Image.open("../assets/target_sensor.png"))
 
-            self.counter = State().get_data("difficulty")["missing_letters_counter"]
+            self.initial_counter = State().get_data("difficulty")["missing_letters_counter"]
+            self.counter = self.initial_counter
             self.sensor = self.create()
             self.initialized = True
 
@@ -33,7 +34,7 @@ class MissedShotsSensor:
         self.__update_counter_display()
 
     def reset(self):
-        self.counter = 5
+        self.counter = self.initial_counter
         self.__update_counter_display()
 
     def __update_counter_display(self):
